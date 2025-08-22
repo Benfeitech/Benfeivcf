@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCF Contact Uploader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f4f4f4;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create VCF Session</h1>
+    <form id="uploadForm">
+      <input type="text" id="session" placeholder="Session Name" required />
+      <input type="text" id="name" placeholder="Contact Name" required />
+      <input type="text" id="phone" placeholder="Phone Number" required />
+      <button type="submit">Upload Contact</button>
+    </form>
+
+    <p id="message"></p>
+
+    <h2>Download Contacts</h2>
+    <input type="text" id="downloadSession" placeholder="Session Name" />
+    <button onclick="downloadVCF()">Download VCF</button>
+
+    <div class="footer">Powered By Benfei Tech</div>
+  </div>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const session = document.getElementById("session").value;
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+
+      const res = await fetch("/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session, name, phone })
+      });
+
+      const text = await res.text();
+      document.getElementById("message").innerText = text;
+    });
+
+    function downloadVCF() {
+      const session = document.getElementById("downloadSession").value;
+      if (session) {
+        window.location.href = `/download/${session}`;
+      }
+    }
+  </script>
+</body>
+</html>
