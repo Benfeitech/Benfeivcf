@@ -1,8 +1,12 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f8f9fc;
   margin: 0;
   padding: 0;
+  height: 100vh; /* full screen height */
+  display: flex;
+  justify-content: center;  /* center horizontally */
+  align-items: center;      /* center vertically */
+  background: #f5f7fa;      /* light background */
+  font-family: Arial, sans-serif;
 }
 
 .container {
