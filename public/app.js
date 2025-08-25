@@ -16,14 +16,25 @@ if (uploadForm) {
       return;
     }
 
+    // Get sessionId from URL (index.html?sid=xxxxx)
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get("sid");
+
+    if (!sessionId) {
+      statusMessage.textContent = "❌ No session ID found in URL.";
+      return;
+    }
+
     try {
-      const res = await fetch(`${API_BASE}/api/default-session/upload`, {
+      const res = await fetch(`${API_BASE}/api/${sessionId}/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone })
       });
       const data = await res.json();
-      statusMessage.textContent = res.ok ? "✅ Uploaded successfully!" : `❌ ${data.error}`;
+      statusMessage.textContent = res.ok
+        ? "✅ Uploaded successfully!"
+        : `❌ ${data.error}`;
     } catch {
       statusMessage.textContent = "❌ Network error. Try again.";
     }
@@ -42,17 +53,17 @@ if (createForm) {
     const whatsappLink = createForm.querySelector("input[type='url']").value.trim();
 
     try {
-      const res = await fetch(`${API_BASE}/api/create-session`, {
+      const res = await fetch(`${API_BASE}/api/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionName, duration, whatsappLink })
       });
       const data = await res.json();
       createStatus.textContent = res.ok
-        ? `✅ Session created! Share link: /api/${data.sessionId}/upload`
+        ? `✅ Session created! Share link: ${data.uploadPage}`
         : `❌ ${data.error}`;
     } catch {
       createStatus.textContent = "❌ Network error. Try again.";
     }
   });
-                                               }
+}
