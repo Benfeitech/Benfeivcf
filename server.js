@@ -1,40 +1,78 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const sanitize = require('sanitize-filename');
-
+const express = require("express");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-const DATA_DIR = path.join(__dirname, 'data');
-const SESSIONS_DIR = path.join(DATA_DIR, 'sessions');
-
-
-// Ensure data directories exist
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
-if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR);
-
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
 
+let sessions = {}; // { sessionId: { name, expiresAt, whatsappLink, contacts: [] } }
 
-// Create session
-app.post('/api/create-session', (req, res) => {
-const { sessionName, durationMinutes } = req.body;
-if (!sessionName || !durationMinutes) return res.status(400).json({ error: 'Missing fields' });
+// ========== Create Session ==========
+app.post("/api/create-session", (req, res) => {
+  const { sessionName, duration, whatsappLink } = req.body;
+  if (!sessionName || !duration) {
+    return res.status(400).json({ error: "Session name and duration are required" });
+  }
 
+  if (duration < 1 || duration > 5) {
+    return res.status(400).json({ error: "Duration must be between 1 and 5 days" });
+  }
 
-const id = uuidv4().slice(0, 8);
-const ownerToken = uuidv4();
-const sanitized = sanitize(sessionName).slice(0, 40) || 'session';
-const now = Date.now();
-const durationMs = Number(durationMinutes) * 60 * 1000;
-const expiresAt = now + durationMs;
+  const sessionId = uuidv4();
+  const expiresAt = Date.now() + duration * 24 * 60 * 60 * 1000; // days → ms
+
+  sessions[sessionId] = {
+    name: sessionName,
+    expiresAt,
+    whatsappLink,
+    contacts: []
+  };
+
+  res.json({ sessionId });
+});
+
+// ========== Upload Contact ==========
+app.post("/api/:sessionId/upload", (req, res) => {
+  const { sessionId } = req.params;
+  const { name, phone } = req.body;
+
+  const session = sessions[sessionId];
+  if (!session) return res.status(404).json({ error: "Session not found" });
+
+  if (Date.now() > session.expiresAt) {
+    delete sessions[sessionId];
+    return res.status(400).json({ error: "This session has expired" });
+  }
+
+  const exists = session.contacts.find(c => c.phone === phone);
+  if (exists) {
+    return res.status(400).json({ error: "Contact already exists" });
+  }
+
+  session.contacts.push({ name, phone });
+  res.json({ message: "Contact uploaded successfully" });
+});
+
+// ========== Download VCF ==========
+app.get("/api/:sessionId/download", (req, res) => {
+  const { sessionId } = req.params;
+  const session = sessions[sessionId];
+
+  if (!session) return res.status(404).send("Session not found");
+
+  let vcfContent = "";
+  session.contacts.forEach(c => {
+    vcfContent += `BEGIN:VCARD\nVERSION:3.0\nFN:${c.name}\nTEL:${c.phone}\nEND:VCARD\n`;
+  });
+
+  res.setHeader("Content-disposition", `attachment; filename=${session.name}.vcf`);
+  res.setHeader("Content-type", "text/vcard");
+  res.send(vcfContent);
+});
+
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));const expiresAt = now + durationMs;
 
 
 const session = {
