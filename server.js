@@ -10,27 +10,21 @@ app.use(express.static("public"));
 let sessions = {}; // { sessionId: { name, expiresAt, whatsappLink, contacts: [] } }
 
 // ========== Create Session ==========
-app.post("/api/create-session", (req, res) => {
+app.post("/api/session", (req, res) => {
   const { sessionName, duration, whatsappLink } = req.body;
-  if (!sessionName || !duration) {
-    return res.status(400).json({ error: "Session name and duration are required" });
-  }
-
-  if (duration < 1 || duration > 5) {
-    return res.status(400).json({ error: "Duration must be between 1 and 5 days" });
-  }
-
   const sessionId = uuidv4();
-  const expiresAt = Date.now() + duration * 24 * 60 * 60 * 1000; // days → ms
 
-  sessions[sessionId] = {
-    name: sessionName,
-    expiresAt,
-    whatsappLink,
-    contacts: []
-  };
+  const expiresAt = Date.now() + duration * 24 * 60 * 60 * 1000;
+  sessions[sessionId] = { sessionName, duration, whatsappLink, expiresAt, contacts: [] };
 
-  res.json({ sessionId });
+  const baseUrl = "https://benfeivcf.onrender.com"; // e.g. https://vcf-app-xxxxx.onrender.com
+
+  res.json({
+    message: "Session created",
+    sessionId,
+    uploadPage: `${baseUrl}/index.html?sid=${sessionId}`,  // 👈 this is what you’ll share
+    adminPage: `${baseUrl}/admin.html?sid=${sessionId}`    // 👈 optional, for you to download
+  });
 });
 
 // ========== Upload Contact ==========
