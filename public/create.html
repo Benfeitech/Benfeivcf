@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Create VCF Session</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Create a VCF Session</h2>
+    <form id="createForm">
+      <input type="text" name="sessionName" placeholder="Session Name... (e.g. Benfei VCF 1)" required>
+      <select required>
+        <option value="1">1 Day</option>
+        <option value="2">2 Days</option>
+        <option value="3">3 Days</option>
+        <option value="4">4 Days</option>
+        <option value="5">5 Days</option>
+      </select>
+      <input type="url" placeholder="WhatsApp Group Link (optional)">
+      <button type="submit">Create Session</button>
+    </form>
+    <p id="createStatus" class="status"></p>
+    <p style="text-align:center; margin-top:20px;">
+      <button style="background: #2caf44; color: #fff; text-align: center; width: 100%;" onclick="location.href='https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B'">Follow WhatsApp Channel</button>
+    </p>
+    <p style="text-align:center; margin-top:30px; font-size:14px; color:#555;">
+      Powered by Benfei Tech
+    </p>
+  </div>
+  <script src="app.js"></script>
+  <style >
+      body {
+  font-family: Arial, sans-serif;
+  background: #f8f9fc;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, select, button {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.status {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+  </style>
+</body>
+</html>
