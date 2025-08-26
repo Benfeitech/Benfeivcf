@@ -24,7 +24,7 @@ app.post("/api/session", (req, res) => {
     message: "Session created",
     sessionId,
     uploadPage: `${baseUrl}/api/${sessionId}/upload`,   // 👈 new clean path
-    adminPage: `${baseUrl}/admin.html?sid=${sessionId}`
+    adminPage: `${baseUrl}/create.html?sid=${sessionId}`
   });
 });
 
