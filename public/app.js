@@ -1,68 +1,76 @@
-const API_BASE = ""; // auto-detect same server
+const API_BASE = ""; // same server
 
-// Extract sessionId from URL
-const urlParams = new URLSearchParams(window.location.search);
-const sessionId = urlParams.get("sid");
+// Extract sessionId from URL path (/api/:sessionId/upload)
+const pathParts = window.location.pathname.split("/");
+const sessionId = pathParts[2];
 
-const sessionNameEl = document.getElementById("sessionName");
+// DOM Elements
+const uploadForm = document.getElementById("uploadForm");
+const statusMessage = document.getElementById("statusMessage");
+const sessionTitle = document.getElementById("sessionTitle");
 const countdownEl = document.getElementById("countdown");
 const whatsappLinkEl = document.getElementById("whatsappLink");
-const downloadBtn = document.getElementById("downloadBtn");
-const statusMessage = document.getElementById("statusMessage");
-const uploadForm = document.getElementById("uploadForm");
+const expiredSection = document.getElementById("expiredSection");
 
-let expiresAt = null;
-
-// ========== Load Session Info ==========
-async function loadSessionInfo() {
+// ========== Fetch Session Info ==========
+async function loadSession() {
   try {
-    const res = await fetch(`${API_BASE}/api/${sessionId}/info`);
+    const res = await fetch(`/api/session-info/${sessionId}`);
+    if (!res.ok) throw new Error("Invalid session link");
+
     const data = await res.json();
 
-    if (!res.ok) {
-      sessionNameEl.textContent = "❌ Session not found.";
-      return;
-    }
+    // Show session name
+    if (sessionTitle) sessionTitle.textContent = data.sessionName;
 
-    sessionNameEl.textContent = data.sessionName;
-    expiresAt = data.expiresAt;
-
-    // WhatsApp link
-    if (data.whatsappLink) {
-      whatsappLinkEl.textContent = "📱 Join WhatsApp Group";
+    // Show WhatsApp link
+    if (whatsappLinkEl) {
       whatsappLinkEl.href = data.whatsappLink;
+      whatsappLinkEl.style.display = "inline-block";
     }
-    
-    startCountdown();
-  } catch {
-    sessionNameEl.textContent = "❌ Failed to load session.";
+
+    // Setup countdown
+    if (countdownEl) startCountdown(data.expiresAt);
+
+  } catch (err) {
+    if (statusMessage) statusMessage.textContent = "❌ Invalid session link.";
+    if (uploadForm) uploadForm.style.display = "none";
   }
 }
 
-// ========== Countdown ==========
-function startCountdown() {
-  const timer = setInterval(() => {
+// ========== Countdown Timer ==========
+function startCountdown(expiryTime) {
+  function updateTimer() {
     const now = Date.now();
-    const diff = expiresAt - now;
+    const diff = expiryTime - now;
 
     if (diff <= 0) {
+      countdownEl.textContent = "Expired!";
+      if (uploadForm) uploadForm.style.display = "none";
+      if (expiredSection) {
+        expiredSection.style.display = "block";
+        expiredSection.innerHTML = `
+          <p>📥 Session expired. Download all contacts below:</p>
+          <a href="/api/${sessionId}/download" class="btn">⬇ Download VCF</a>
+        `;
+      }
       clearInterval(timer);
-      countdownEl.textContent = "⏰ Session expired!";
-      downloadBtn.style.display = "inline-block";
-      downloadBtn.onclick = () => {
-        window.location.href = `${API_BASE}/api/${sessionId}/download`;
-      };
       return;
     }
 
-    const hrs = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const secs = Math.floor((diff % (1000 * 60)) / 1000);
-    countdownEl.textContent = `⏳ Expires in ${hrs}h ${mins}m ${secs}s`;
-  }, 1000);
+
+    countdownEl.textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
+  }
+
+  updateTimer();
+  const timer = setInterval(updateTimer, 1000);
 }
 
-// ========== Upload Form ==========
+// ========== Upload Contact ==========
 if (uploadForm) {
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -71,35 +79,39 @@ if (uploadForm) {
     const phone = phoneInput.value.trim();
 
     if (!name || !phone) {
-      showStatus("❌ Please enter both name and phone.");
+      showStatus("❌ Please enter both name and phone.", false);
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE}/api/${sessionId}/upload`, {
+      const res = await fetch(`/api/${sessionId}/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone })
       });
       const data = await res.json();
-      showStatus(res.ok ? "✅ Contact uploaded successfully!" : `❌ ${data.error}`);
+      showStatus(res.ok ? "✅ Uploaded successfully!" : `❌ ${data.error}`, res.ok);
+      if (res.ok) {
+        nameInput.value = "";
+        phoneInput.value = "";
+      }
     } catch {
-      showStatus("❌ Network error. Try again.");
+      showStatus("❌ Network error. Try again.", false);
     }
   });
 }
 
-// ========== Status Auto-Hide ==========
-function showStatus(msg) {
+// ========== Auto-hide Status ==========
+function showStatus(msg, success) {
+  if (!statusMessage) return;
   statusMessage.textContent = msg;
+  statusMessage.style.color = success ? "green" : "red";
+
   setTimeout(() => {
     statusMessage.textContent = "";
   }, 3000);
 }
 
 // Init
-if (sessionId) {
-  loadSessionInfo();
-} else {
-  sessionNameEl.textContent = "❌ Invalid session link.";
-}
+if (sessionId) loadSession();
+      
