@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Contacts</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2 id="sessionName"></h2>
+    <p id="countdown"></p>
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="phone" placeholder="Phone Number (+234...)">
+    <button onclick="uploadContact()">Upload Contact</button>
+    <p id="message"></p>
+    <button id="whatsappBtn">Join WhatsApp Group</button>
+    <button id="downloadBtn" style="display:none;">Download Contacts (VCF)</button>
+    <button onclick="window.open('https://whatsapp.com/channel/dev-channel', '_blank')">Follow Developer Channel</button>
+    <div class="footer">Powered by Benfei Tech</div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
