@@ -42,7 +42,7 @@ app.get("/api/:sessionId/upload", (req, res) => {
   if (!sessions[sessionId]) {
     return res.status(404).send("❌ Invalid session link");
   }
-  res.sendFile(path.join(__dirname, "public", "upload.html"));
+  res.sendFile(path.join(__dirname, "public", "create.html"));
 });
 
 // Session info (used by upload page JS)
