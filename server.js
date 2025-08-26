@@ -55,6 +55,19 @@ app.post("/api/:sessionId/upload", (req, res) => {
   res.json({ message: "Contact uploaded successfully" });
 });
 
+// ========== Session Info ==========
+app.get("/api/session-info/:sessionId", (req, res) => {
+  const { sessionId } = req.params;
+  const session = sessions[sessionId];
+  if (!session) return res.status(404).json({ error: "Session not found" });
+
+  res.json({
+    sessionName: session.sessionName,
+    whatsappLink: session.whatsappLink,
+    expiresAt: session.expiresAt
+  });
+});
+
 // ========== Download VCF ==========
 app.get("/api/:sessionId/download", (req, res) => {
   const { sessionId } = req.params;
