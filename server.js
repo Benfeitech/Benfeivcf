@@ -33,11 +33,11 @@ app.post("/api/create-session", (req, res) => {
   };
 
   // Send back link to upload page
-  res.json({ link: `/api/${sessionId}/upload` });
+  res.json({ link: `/api/${sessionId}/create` });
 });
 
 // Serve upload page
-app.get("/api/:sessionId/upload", (req, res) => {
+app.get("/api/:sessionId/create", (req, res) => {
   const { sessionId } = req.params;
   if (!sessions[sessionId]) {
     return res.status(404).send("❌ Invalid session link");
