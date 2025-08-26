@@ -28,6 +28,20 @@ app.post("/api/session", (req, res) => {
   });
 });
 
+// ========== Get Session Info ==========
+app.get("/api/:sessionId/info", (req, res) => {
+  const { sessionId } = req.params;
+  const session = sessions[sessionId];
+  if (!session) return res.status(404).json({ error: "Session not found" });
+
+  res.json({
+    sessionName: session.sessionName,
+    expiresAt: session.expiresAt,
+    whatsappLink: session.whatsappLink
+  });
+});
+
+
 // ========== Upload Contact ==========
 app.post("/api/:sessionId/upload", (req, res) => {
   const { sessionId } = req.params;
