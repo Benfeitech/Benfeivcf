@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCF Upload</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    #statusMessage { margin-top: 10px; font-weight: bold; }
+    #downloadBtn { display: none; margin-top: 20px; }
+    .session-info { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="session-info">
+    <h2 id="sessionName">Loading session...</h2>
+    <p id="countdown"></p>
+    <a id="whatsappLink" href="#" target="_blank"></a>
+  </div>
+
+  <form id="uploadForm">
+    <input type="text" placeholder="Name" required>
+    <input type="text" placeholder="Phone" required>
+    <button type="submit">Upload Contact</button>
+  </form>
+
+  <div id="statusMessage"></div>
+
+  <button id="downloadBtn">⬇️ Download Contacts (.vcf)</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
