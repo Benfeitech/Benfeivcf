@@ -1,8 +1,8 @@
 const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
-  "https://YOUR_PROJECT.supabase.co",
-  "YOUR_PUBLIC_ANON_KEY"
+  "https://uxyxggrhpljlgkmhpkec.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXhnZ3JocGxqbGdrbWhwa2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTc4OTYsImV4cCI6MjA3MTg5Mzg5Nn0.PZYBSt_0FlFfGjuBHXERBpU41hcDGKBx7gBdi9nYQfc"
 );
 
 // Save new session
