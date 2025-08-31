@@ -2,7 +2,7 @@
 const page = window.location.pathname.split("/").pop();
 
 // API base
-const API_BASE = "http://localhost:3000"; // change to your deployed URL when online
+const API_BASE = "https://benfeivcf.vercel.app/"; // change to your deployed URL when online
 
 // ------------------ INDEX PAGE ------------------
 if (page === "index.html" || page === "") {
@@ -33,6 +33,39 @@ if (page === "index.html" || page === "") {
     });
   }
 }
+
+document.getElementById("sessionForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const sessionName = document.getElementById("sessionName").value;
+  const sessionResultDiv = document.getElementById("sessionResult");
+
+  try {
+    const res = await fetch("/create-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionName }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // Show session link for user to copy or click
+      sessionResultDiv.innerHTML = `
+        ✅ Session created!<br>
+        <a href="${data.sessionLink}" target="_blank">
+          ${window.location.origin}${data.sessionLink}
+        </a>
+        <br><small>Copy this link or click it to upload contacts.</small>
+      `;
+    } else {
+      sessionResultDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
+    }
+  } catch (err) {
+    console.error(err);
+    sessionResultDiv.innerHTML = `<p style="color:red;">Something went wrong. Please try again.</p>`;
+  }
+});
 
 // ------------------ SESSION PAGE ------------------
 if (page === "session.html") {
