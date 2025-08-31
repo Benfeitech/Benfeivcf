@@ -1,9 +1,10 @@
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  "https://uxyxggrhpljlgkmhpkec.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXhnZ3JocGxqbGdrbWhwa2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTc4OTYsImV4cCI6MjA3MTg5Mzg5Nn0.PZYBSt_0FlFfGjuBHXERBpU41hcDGKBx7gBdi9nYQfc"
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 // Save new session
 async function saveSession(sessionName, whatsappLink, expiresIn) {
