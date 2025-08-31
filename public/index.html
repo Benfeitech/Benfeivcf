@@ -4,104 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create VCF Session</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #39ff14; /* neon green */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #39ff14;
       text-align: center;
+      padding: 40px;
     }
-    .container {
-      background: rgba(0,0,0,0.6);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #39ff14;
-      animation: fadeIn 1s ease-in;
-      width: 90%;
-      max-width: 400px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-    }
-    input, select {
-      background: #1a1a1a;
-      color: #fff;
-    }
+    h1 { font-size: 2rem; margin-bottom: 20px; animation: glow 2s infinite alternate; }
+    @keyframes glow { from { text-shadow: 0 0 10px #39ff14; } to { text-shadow: 0 0 20px #39ff14, 0 0 30px #00ffcc; } }
+    form { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; display: inline-block; }
+    input, select { padding: 10px; margin: 10px 0; border-radius: 8px; border: none; width: 90%; }
     button {
-      background: #39ff14;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      padding: 12px 20px; border: none; border-radius: 8px;
+      background: #39ff14; color: black; font-weight: bold; cursor: pointer;
+      transition: transform 0.2s;
     }
-    button:hover {
-      transform: scale(1.05);
-      background: #00ffcc;
+    button:hover { transform: scale(1.1); background: #00ffcc; }
+    #sessionLink { margin-top: 20px; font-size: 1.1rem; }
+    .footer { margin-top: 30px; font-size: 0.9rem; }
+    .follow-btn {
+      display: inline-block; margin-top: 20px; padding: 10px 16px;
+      background: #00ffcc; color: black; border-radius: 8px; text-decoration: none;
+      transition: 0.3s; font-weight: bold;
     }
-    .footer {
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    .whatsapp-btn {
-      margin-top: 10px;
-      display: inline-block;
-      background: #25d366;
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
-    .whatsapp-btn:hover {
-      background: #128c7e;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
+    .follow-btn:hover { background: #39ff14; transform: scale(1.1); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1><i class="fa-solid fa-address-book"></i> Create VCF Session</h1>
-    <form id="createSessionForm">
-      <input type="text" name="name" placeholder="Enter session name" required>
-      <input type="url" name="whatsapp" placeholder="WhatsApp group link" required>
-      <select name="expiry" required>
-        <option value="" disabled selected>Expiry (days)</option>
-        <option value="1">1 Day</option>
-        <option value="2">2 Days</option>
-        <option value="3">3 Days</option>
-        <option value="4">4 Days</option>
-        <option value="5">5 Day</option>
-        <option value="6">6 Days</option>
-        <option value="7">7 Days</option>
-        <option value="8">8 Days</option>
-        <option value="9">9 Day</option>
-        <option value="10">10 Days</option>
-      </select>
-      <button type="submit"><i class="fa-solid fa-plus"></i> Create</button>
-    </form>
+  <h1><i class="fa-solid fa-address-book"></i> Create VCF Session</h1>
+  <form id="createSessionForm">
+    <input type="text" id="sessionName" placeholder="Enter session name" required><br>
+    <select id="duration">
+      <option value="1">1 Day</option>
+      <option value="3">3 Days</option>
+      <option value="5">5 Days</option>
+      <option value="10">10 Days</option>
+    </select><br>
+    <input type="url" id="whatsappLink" placeholder="WhatsApp group link" required><br>
+    <button type="submit"><i class="fa-solid fa-plus-circle"></i> Create Session</button>
+  </form>
 
-    <a class="whatsapp-btn" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank">
-      <i class="fa-brands fa-whatsapp"></i> Follow Developer WhatsApp Channel
-    </a>
+  <div id="sessionLink"></div>
 
-    <div class="footer">Powered by Benfei Tech</div>
-  </div>
+  <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" class="follow-btn"><i class="fa-brands fa-whatsapp"></i> Follow developer WhatsApp channel</a>
+  <div class="footer">Powered by Benfei Tech</div>
+
   <script src="script.js"></script>
 </body>
- </html>
-       
+  </html>
+  
