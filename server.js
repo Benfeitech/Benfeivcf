@@ -17,7 +17,7 @@ app.post("/create-session", async (req, res) => {
     const session = await saveSession(sessionName, whatsappLink, expiresIn);
     res.json({
       success: true,
-      url: `http://localhost:5500/session.html?id=${session.id}`, // adjust when deploying
+      url: `https://benfeivcf.vercel.app//session.html?id=${session.id}`, // adjust when deploying
     });
   } catch (err) {
     res.json({ success: false, error: err.message });
