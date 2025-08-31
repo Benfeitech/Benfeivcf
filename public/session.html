@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCF Session</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #39ff14;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 { animation: glow 2s infinite alternate; }
+    @keyframes glow { from { text-shadow: 0 0 10px #39ff14; } to { text-shadow: 0 0 20px #39ff14, 0 0 30px #ff0099; } }
+    #countdown { font-size: 1.5rem; margin: 20px 0; }
+    button {
+      padding: 12px 20px; border: none; border-radius: 8px;
+      background: #39ff14; color: black; font-weight: bold; cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.1); background: #ff0099; }
+    .footer { margin-top: 30px; font-size: 0.9rem; }
+    .follow-btn {
+      display: inline-block; margin-top: 20px; padding: 10px 16px;
+      background: #00ffcc; color: black; border-radius: 8px; text-decoration: none;
+      transition: 0.3s; font-weight: bold;
+    }
+    .follow-btn:hover { background: #39ff14; transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <h1><i class="fa-solid fa-hourglass-half"></i> VCF Session</h1>
+  <div id="sessionName"></div>
+  <div id="countdown"></div>
+  <button id="downloadBtn" style="display:none;"><i class="fa-solid fa-download"></i> Download VCF</button>
+
+  <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" class="follow-btn"><i class="fa-brands fa-whatsapp"></i> Follow developer WhatsApp channel</a>
+  <div class="footer">Powered by Benfei Tech</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
