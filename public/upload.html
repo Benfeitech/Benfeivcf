@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #39ff14;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #39ff14;
+      animation: fadeIn 1s ease-in;
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+    input {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    button {
+      background: #39ff14;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: #00ffcc;
+    }
+    .message {
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    .success {
+      color: #39ff14;
+    }
+    .error {
+      color: #ff3333;
+    }
+    .whatsapp-btn {
+      background: #25d366;
+      color: white;
+      display: inline-block;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+    .whatsapp-btn:hover {
+      background: #128c7e;
+    }
+    .footer {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fa-solid fa-upload"></i> Upload Contact</h1>
+    <form id="uploadForm">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="tel" name="phone" placeholder="Your Phone Number" required>
+      <button type="submit"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+    </form>
+    <div id="message" class="message"></div>
+
+    <a class="whatsapp-btn" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank">
+      <i class="fa-brands fa-whatsapp"></i> Follow Developer WhatsApp Channel
+    </a>
+
+    <div class="footer">Powered by Benfei Tech</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+      
