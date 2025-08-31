@@ -4,102 +4,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Contact</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #141e30, #243b55);
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
       color: #39ff14;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       text-align: center;
+      padding: 40px;
     }
-    .container {
-      background: rgba(0,0,0,0.6);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #39ff14;
-      animation: fadeIn 1s ease-in;
-      width: 90%;
-      max-width: 400px;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-    }
-    input {
-      background: #1a1a1a;
-      color: #fff;
-    }
+    h1 { animation: glow 2s infinite alternate; }
+    @keyframes glow { from { text-shadow: 0 0 10px #39ff14; } to { text-shadow: 0 0 20px #39ff14, 0 0 30px #ffcc00; } }
+    form { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; display: inline-block; }
+    input { padding: 10px; margin: 10px 0; border-radius: 8px; border: none; width: 90%; }
     button {
-      background: #39ff14;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      padding: 12px 20px; border: none; border-radius: 8px;
+      background: #39ff14; color: black; font-weight: bold; cursor: pointer;
+      transition: transform 0.2s;
     }
-    button:hover {
-      transform: scale(1.05);
-      background: #00ffcc;
+    button:hover { transform: scale(1.1); background: #ffcc00; }
+    #status { margin-top: 20px; }
+    .footer { margin-top: 30px; font-size: 0.9rem; }
+    .follow-btn {
+      display: inline-block; margin-top: 20px; padding: 10px 16px;
+      background: #00ffcc; color: black; border-radius: 8px; text-decoration: none;
+      transition: 0.3s; font-weight: bold;
     }
-    .message {
-      margin: 10px 0;
-      font-weight: bold;
-    }
-    .success {
-      color: #39ff14;
-    }
-    .error {
-      color: #ff3333;
-    }
-    .whatsapp-btn {
-      background: #25d366;
-      color: white;
-      display: inline-block;
-      padding: 10px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin-top: 10px;
-    }
-    .whatsapp-btn:hover {
-      background: #128c7e;
-    }
-    .footer {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
+    .follow-btn:hover { background: #39ff14; transform: scale(1.1); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1><i class="fa-solid fa-upload"></i> Upload Contact</h1>
-    <form id="uploadForm">
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="tel" name="phone" placeholder="Your Phone Number" required>
-      <button type="submit"><i class="fa-solid fa-paper-plane"></i> Submit</button>
-    </form>
-    <div id="message" class="message"></div>
+  <h1><i class="fa-solid fa-upload"></i> Upload Your Contact</h1>
+  <form id="uploadContactForm">
+    <input type="text" id="name" placeholder="Enter your name" required><br>
+    <input type="text" id="phone" placeholder="Enter your phone number" required><br>
+    <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
+  </form>
 
-    <a class="whatsapp-btn" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank">
-      <i class="fa-brands fa-whatsapp"></i> Follow Developer WhatsApp Channel
-    </a>
+  <div id="status"></div>
+  <div id="whatsappGroup"></div>
 
-    <div class="footer">Powered by Benfei Tech</div>
-  </div>
+  <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" class="follow-btn"><i class="fa-brands fa-whatsapp"></i> Follow developer WhatsApp channel</a>
+  <div class="footer">Powered by Benfei Tech</div>
 
   <script src="script.js"></script>
 </body>
 </html>
-      
