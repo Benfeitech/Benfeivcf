@@ -1,215 +1,107 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCF Contact Collector</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create VCF Session</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #39ff14; /* neon green */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #39ff14;
+      animation: fadeIn 1s ease-in;
+      width: 90%;
+      max-width: 400px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+    input, select {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    button {
+      background: #39ff14;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: #00ffcc;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    .whatsapp-btn {
+      margin-top: 10px;
+      display: inline-block;
+      background: #25d366;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .whatsapp-btn:hover {
+      background: #128c7e;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>VCF Contact Collector</h1>
-            <p>Create and manage contact collection sessions</p>
-        </header>
+  <div class="container">
+    <h1><i class="fa-solid fa-address-book"></i> Create VCF Session</h1>
+    <form id="createSessionForm">
+      <input type="text" name="name" placeholder="Enter session name" required>
+      <input type="url" name="whatsapp" placeholder="WhatsApp group link" required>
+      <select name="expiry" required>
+        <option value="" disabled selected>Expiry (days)</option>
+        <option value="1">1 Day</option>
+        <option value="2">2 Days</option>
+        <option value="3">3 Days</option>
+        <option value="4">4 Days</option>
+        <option value="5">5 Day</option>
+        <option value="6">6 Days</option>
+        <option value="7">7 Days</option>
+        <option value="8">8 Days</option>
+        <option value="9">9 Day</option>
+        <option value="10">10 Days</option>
+      </select>
+      <button type="submit"><i class="fa-solid fa-plus"></i> Create</button>
+    </form>
 
-        <main id="main-content">
-            <!-- Session Creation Page -->
-            <div id="session-creation" class="page active">
-                <div class="form-container">
-                    <h2>Create New VCF Session</h2>
-                    <form id="session-form">
-                        <div class="input-group">
-                            <label for="session-name">Session Name:</label>
-                            <input type="text" id="session-name" name="sessionName" placeholder="Enter session name" required>
-                        </div>
+    <a class="whatsapp-btn" href="https://chat.whatsapp.com/yourchannel" target="_blank">
+      <i class="fa-brands fa-whatsapp"></i> Follow Developer WhatsApp Channel
+    </a>
 
-                        <div class="input-group">
-                            <label for="timer-days">Session Duration:</label>
-                            <select id="timer-days" name="timerDays" required>
-                                <option value="">Select duration</option>
-                                <option value="1">1 Day</option>
-                                <option value="2">2 Days</option>
-                                <option value="3">3 Days</option>
-                                <option value="4">4 Days</option>
-                                <option value="5">5 Days</option>
-                                <option value="6">6 Days</option>
-                                <option value="7">7 Days</option>
-                                <option value="8">8 Days</option>
-                                <option value="9">9 Days</option>
-                                <option value="10">10 Days</option>
-                            </select>
-                        </div>
-
-                        <div class="input-group">
-                            <label for="whatsapp-link">WhatsApp Group Link:</label>
-                            <input type="url" id="whatsapp-link" name="whatsappLink" placeholder="https://chat.whatsapp.com/..." required>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Create Session</button>
-                    </form>
-
-                    <!-- Generated Link Display -->
-                    <div id="generated-link" class="link-container" style="display: none;">
-                        <h3>Session Created Successfully!</h3>
-                        <p>Share this link to collect contacts:</p>
-                        <div class="link-display">
-                            <input type="text" id="session-url" readonly>
-                            <button id="copy-link" class="btn btn-secondary">Copy Link</button>
-                        </div>
-                        <button id="test-session" class="btn btn-primary">Test Session</button>
-                        <button id="create-new" class="btn btn-outline">Create New Session</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upload Page -->
-            <div id="upload-page" class="page">
-                <div class="upload-container">
-                    <div class="session-header">
-                        <h2 id="session-title">Session Name</h2>
-                        <div id="countdown-timer" class="timer"></div>
-                    </div>
-
-                    <div id="upload-form-container">
-                        <form id="contact-form">
-                            <div class="input-group">
-                                <label for="contact-name">Your Name:</label>
-                                <input type="text" id="contact-name" name="contactName" placeholder="Enter your full name" required>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="contact-phone">Phone Number:</label>
-                                <input type="tel" id="contact-phone" name="contactPhone" placeholder="+1234567890" required>
-                                <small>Include country code (e.g., +1 for USA, +234 for Nigeria)</small>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Add Contact</button>
-                        </form>
-
-                        <div id="whatsapp-group-section">
-                            <button id="join-whatsapp" class="btn btn-whatsapp">📱 Join WhatsApp Group</button>
-                        </div>
-                    </div>
-
-                    <!-- Session Expired -->
-                    <div id="session-expired" style="display: none;">
-                        <h3>⏰ Session Expired</h3>
-                        <p>This collection session has ended.</p>
-                        <button id="download-vcf" class="btn btn-success">📥 Download VCF File</button>
-                        <div id="contact-count"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <div class="footer-content">
-                <button id="follow-developer" class="btn btn-social">
-                    📢 Follow Developer's WhatsApp Channel
-                </button>
-                <p class="powered-by">Powered by benfei Tech</p>
-            </div>
-        </footer>
-    </div>
-
-    <script src="script.js"></script>
-
-    <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}
-
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-main {
-    flex: 1;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    overflow: hidden;
-}
-
-.page {
-    display: none;
-    padding: 30px;
-}
-
-.page.active {
-    display: block;
-}
-
-.form-container, .upload-container {
-    max-width: 100%;
-}
-
-h2 {
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 1.8rem;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
-}
-
-input, select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-    background: white;
-}
-
-input:focus, select:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 
-    </style>
-    
+    <div class="footer">Powered by Benfei Tech</div>
+  </div>
+  <script src="script.js"></script>
 </body>
-  </html>
+ </html>
+       
