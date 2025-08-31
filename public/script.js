@@ -15,7 +15,7 @@ if (page === "index.html" || page === "") {
       const whatsappLink = form.whatsappLink.value;
       const expiresIn = form.expiresIn.value;
 
-      const res = await fetch(`${API_BASE}/create-session`, {
+      const res = await fetch(`${API_BASE}/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionName, whatsappLink, expiresIn }),
