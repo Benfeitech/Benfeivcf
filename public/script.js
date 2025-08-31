@@ -66,7 +66,39 @@ document.getElementById("sessionForm")?.addEventListener("submit", async (e) => 
     sessionResultDiv.innerHTML = `<p style="color:red;">Something went wrong. Please try again.</p>`;
   }
 });
+document.getElementById("sessionForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
+  const sessionName = document.getElementById("sessionName").value;
+  const sessionResultDiv = document.getElementById("sessionResult");
+
+  try {
+    const res = await fetch("/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionName }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // Show session link for user to copy or click
+      sessionResultDiv.innerHTML = `
+        ✅ Session created!<br>
+        <a href="${data.sessionLink}" target="_blank">
+          ${window.location.origin}${data.sessionLink}
+        </a>
+        <br><small>Copy this link or click it to upload contacts.</small>
+      `;
+    } else {
+      sessionResultDiv.innerHTML = `<p style="color:red;">❌ ${data.message}</p>`;
+    }
+  } catch (err) {
+    console.error(err);
+    sessionResultDiv.innerHTML = `<p style="color:red;">Something went wrong. Please try again.</p>`;
+  }
+});
+  
 // ------------------ SESSION PAGE ------------------
 if (page === "session.html") {
   const params = new URLSearchParams(window.location.search);
