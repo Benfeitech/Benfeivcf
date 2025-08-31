@@ -1,72 +1,108 @@
-// ===== For index.html =====
-async function createSession() {
-  const sessionName = document.getElementById("sessionName").value;
-  const duration = document.getElementById("duration").value;
-  const whatsappLink = document.getElementById("whatsappLink").value;
+// Get current page
+const page = window.location.pathname.split("/").pop();
 
-  const res = await fetch("/api/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionName, duration, whatsappLink })
-  });
+// API base
+const API_BASE = "http://localhost:3000"; // change to your deployed URL when online
 
-  const data = await res.json();
-  if (data.link) {
-    document.getElementById("sessionLink").innerHTML =
-      `Session Created: <a href="${data.link}">${window.location.origin}${data.link}</a>`;
-  } else {
-    alert(data.error);
+// ------------------ INDEX PAGE ------------------
+if (page === "index.html" || page === "") {
+  const form = document.getElementById("createForm");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const sessionName = form.sessionName.value;
+      const whatsappLink = form.whatsappLink.value;
+      const expiresIn = form.expiresIn.value;
+
+      const res = await fetch(`${API_BASE}/create-session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionName, whatsappLink, expiresIn }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById("message").innerHTML = `
+          ✅ Session created successfully! <br>
+          <a href="${data.url}" target="_blank">${data.url}</a>
+        `;
+      } else {
+        document.getElementById("message").innerHTML = `❌ ${data.error}`;
+      }
+    });
   }
 }
 
-// ===== For upload.html =====
-window.onload = async function() {
+// ------------------ SESSION PAGE ------------------
+if (page === "session.html") {
   const params = new URLSearchParams(window.location.search);
-  const sessionId = params.get("sessionId");
-  if (!sessionId) return;
+  const id = params.get("id");
 
-  const res = await fetch(`/api/session/${sessionId}`);
-  const session = await res.json();
+  async function loadSession() {
+    const res = await fetch(`${API_BASE}/session/${id}`);
+    const data = await res.json();
 
-  document.getElementById("sessionName").innerText = session.name;
-  document.getElementById("whatsappBtn").onclick = () => {
-    window.open(session.whatsappLink, "_blank");
-  };
-
-  // Countdown
-  function updateCountdown() {
-    const diff = session.expiresAt - Date.now();
-    if (diff <= 0) {
-      document.getElementById("countdown").innerText = "Session expired";
-      document.getElementById("downloadBtn").style.display = "block";
-      document.getElementById("downloadBtn").onclick = () => {
-        window.location.href = `/api/session/${sessionId}/download`;
-      };
+    if (!data.success) {
+      document.querySelector(".container").innerHTML = `<p>❌ Session not found</p>`;
       return;
     }
-    const days = Math.floor(diff / (1000*60*60*24));
-    const hours = Math.floor((diff / (1000*60*60)) % 24);
-    const minutes = Math.floor((diff / (1000*60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    document.getElementById("countdown").innerText =
-      `Expires in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+    document.getElementById("sessionName").textContent = data.session.sessionName;
+    document.getElementById("whatsappBtn").href = data.session.whatsappLink;
+    document.getElementById("uploadBtn").href = `upload.html?id=${id}`;
+    if (data.session.contacts.length > 0) {
+      document.getElementById("downloadBtn").style.display = "block";
+      document.getElementById("downloadBtn").href = `${API_BASE}/download-vcf/${id}`;
+    }
+
+    // Countdown
+    const expireTime = new Date(data.session.expiresAt).getTime();
+    const countdownEl = document.getElementById("countdown");
+    setInterval(() => {
+      const now = new Date().getTime();
+      const diff = expireTime - now;
+      if (diff <= 0) {
+        countdownEl.textContent = "Expired";
+      } else {
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        countdownEl.textContent = `${h}h ${m}m ${s}s`;
+      }
+    }, 1000);
   }
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
 
-  // Upload contact function
-  window.uploadContact = async function() {
-    const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
+  loadSession();
+}
 
-    const res = await fetch(`/api/session/${sessionId}/contact`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, phone })
+// ------------------ UPLOAD PAGE ------------------
+if (page === "upload.html") {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const form = document.getElementById("uploadForm");
+  const msg = document.getElementById("message");
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = form.name.value;
+      const phone = form.phone.value;
+
+      const res = await fetch(`${API_BASE}/upload-contact/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        msg.className = "message success";
+        msg.textContent = "✅ Contact uploaded successfully!";
+      } else {
+        msg.className = "message error";
+        msg.textContent = `❌ ${data.error}`;
+      }
     });
-
-    const data = await res.json();
-    document.getElementById("message").innerText = data.message || data.error;
-  };
-};
-        
+  }
+      }
