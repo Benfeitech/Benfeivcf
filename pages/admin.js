@@ -6,6 +6,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [unlocked, setUnlocked] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [status, setStatus] = useState(""); // for status messages
 
   const correctPassword = process.env.NEXT_PUBLIC_ADMIN_PASS; // set this in Vercel env
 
@@ -28,9 +29,16 @@ export default function AdminPage() {
   };
 
   const downloadVCF = () => {
-    let vcfContent = "BEGIN:VCARD\nVERSION:3.0\n";
+    if (contacts.length === 0) {
+      alert("No contacts to download!");
+      return;
+    }
+
+    let vcfContent = "";
     contacts.forEach((c) => {
-      vcfContent += `FN:${c.name}\nTEL:${c.phone}\nEND:VCARD\nBEGIN:VCARD\nVERSION:3.0\n`;
+      vcfContent += "BEGIN:VCARD\nVERSION:3.0\n";
+      vcfContent += `FN:${c.name}\nTEL:${c.phone}\n`;
+      vcfContent += "END:VCARD\n";
     });
 
     const blob = new Blob([vcfContent], { type: "text/vcard" });
@@ -40,6 +48,25 @@ export default function AdminPage() {
     a.download = "contacts.vcf";
     a.click();
     URL.revokeObjectURL(url);
+
+    setStatus("Contacts downloaded successfully!");
+  };
+
+  // New: Clear all contacts
+  const clearContacts = async () => {
+    if (!confirm("Are you sure you want to delete ALL contacts? This cannot be undone.")) return;
+
+    setStatus("Clearing contacts...");
+    // Note: This requires Service Role key on server, not client-side.
+    const { data, error } = await supabase.from("contacts").delete().neq("id", 0);
+
+    if (error) {
+      console.error(error);
+      setStatus(`Error clearing contacts: ${error.message}`);
+    } else {
+      setContacts([]); // reset contacts in state
+      setStatus("All contacts have been cleared!");
+    }
   };
 
   if (!unlocked) {
@@ -60,6 +87,10 @@ export default function AdminPage() {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Admin Panel</h1>
       <button onClick={downloadVCF}>Download VCF</button>
+      <button onClick={clearContacts} style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}>
+        Clear Contacts
+      </button>
+      <p>{status}</p>
       <ul>
         {contacts.map((c) => (
           <li key={c.id}>
@@ -69,5 +100,5 @@ export default function AdminPage() {
       </ul>
     </div>
   );
-        }
-    
+                                            }
+            
