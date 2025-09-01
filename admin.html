@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin — Benfei VCF</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  body {
+    background: #000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    color:#39ff14;
+    font-family:Segoe UI,Roboto,sans-serif;
+  }
+  .box {
+    background:#111;
+    border:2px solid #39ff14;
+    border-radius:16px;
+    padding:24px;
+    width:95%;
+    max-width:420px;
+    text-align:center;
+    box-shadow:0 0 20px #39ff14;
+    animation: pulse 2s infinite alternate;
+  }
+  @keyframes pulse {
+    from { box-shadow:0 0 10px #39ff14; }
+    to { box-shadow:0 0 30px #14ffec; }
+  }
+  h2 { margin-bottom:14px; }
+  input {
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:1px solid #39ff14;
+    background:#000;
+    color:#39ff14;
+  }
+  button {
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#39ff14;
+    color:#000;
+    font-weight:700;
+    margin-top:8px;
+    cursor:pointer;
+  }
+  button:hover { background:#14ffec; }
+  #info { margin-top:12px;font-size:14px }
+</style>
+</head>
+<body>
+  <div class="box">
+    <h2><i class="fas fa-user-shield"></i> Admin — Download VCF</h2>
+    <input id="pass" type="password" placeholder="Enter Admin Password">
+    <button id="dl"><i class="fas fa-download"></i> Download Contacts</button>
+    <div id="info"></div>
+  </div>
+<script>
+document.getElementById('dl').addEventListener('click', async () => {
+  const p = document.getElementById('pass').value.trim();
+  if (!p) { document.getElementById('info').textContent = 'Enter password'; return; }
+  document.getElementById('info').textContent = 'Downloading...';
+  try {
+    const res = await fetch('/api/download', { headers: { 'Authorization': 'Bearer ' + p }});
+    if (!res.ok) {
+      const j = await res.json().catch(()=>null);
+      document.getElementById('info').textContent = (j && j.error) ? j.error : 'Unauthorized';
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'contacts.vcf'; a.click();
+    document.getElementById('info').textContent = 'Downloaded contacts.vcf';
+  } catch(e) {
+    document.getElementById('info').textContent = 'Network error';
+  }
+});
+</script>
+</body>
+</html>
