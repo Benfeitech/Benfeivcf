@@ -3,86 +3,162 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Admin — Benfei VCF</title>
+<title>Welcome to Benfei VCF</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+  :root {
+    --neon: #39ff14;        /* neon green */
+    --dark: #0a0a0a;
+    --text: #e6ffe6;
+    --accent: #14ffec;      /* cyan accent */
+    --warn: #ff6f61;        /* coral red */
+  }
   body {
-    background: #000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    color:#39ff14;
-    font-family:Segoe UI,Roboto,sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top left, #001100, var(--dark));
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
   }
-  .box {
-    background:#111;
-    border:2px solid #39ff14;
-    border-radius:16px;
-    padding:24px;
-    width:95%;
-    max-width:420px;
-    text-align:center;
-    box-shadow:0 0 20px #39ff14;
-    animation: pulse 2s infinite alternate;
+  .card {
+    width: 95%;
+    max-width: 440px;
+    background: rgba(20, 20, 20, 0.9);
+    border: 2px solid var(--neon);
+    border-radius: 18px;
+    box-shadow: 0 0 20px var(--neon), inset 0 0 15px rgba(57,255,20,0.2);
+    padding: 28px;
+    text-align: center;
+    animation: glow 3s infinite alternate;
+    transition: transform 0.3s ease;
   }
-  @keyframes pulse {
-    from { box-shadow:0 0 10px #39ff14; }
-    to { box-shadow:0 0 30px #14ffec; }
+  .card:hover { transform: scale(1.02); }
+  @keyframes glow {
+    from { box-shadow: 0 0 20px var(--neon), inset 0 0 10px rgba(57,255,20,0.15); }
+    to { box-shadow: 0 0 40px var(--neon), inset 0 0 25px rgba(57,255,20,0.3); }
   }
-  h2 { margin-bottom:14px; }
+  h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--neon);
+    text-shadow: 0 0 10px var(--neon);
+  }
+  p { margin: 6px 0 20px; font-size: 14px; color: #b3ffb3; }
   input {
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:8px;
-    border:1px solid #39ff14;
-    background:#000;
-    color:#39ff14;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid var(--neon);
+    background: #111;
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
   }
   button {
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#39ff14;
-    color:#000;
-    font-weight:700;
-    margin-top:8px;
-    cursor:pointer;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: none;
+    background: var(--neon);
+    color: var(--dark);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
   }
-  button:hover { background:#14ffec; }
-  #info { margin-top:12px;font-size:14px }
+  button:hover { background: var(--accent); transform: translateY(-2px); }
+  .msg { margin-top: 14px; font-size: 14px; min-height: 18px; }
+  .wtap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 600;
+    border: 1px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  .wtap:hover { background: var(--accent); color: var(--dark); }
+  .small { font-size: 12px; margin-top: 10px; color: #aaffaa; }
+  i { margin-right: 6px; }
 </style>
 </head>
 <body>
-  <div class="box">
-    <h2><i class="fas fa-user-shield"></i> Admin — Download VCF</h2>
-    <input id="pass" type="password" placeholder="Enter Admin Password">
-    <button id="dl"><i class="fas fa-download"></i> Download Contacts</button>
-    
-    
-    <div id="info"></div>
+  <div class="card">
+    <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
+    <p><i class="fas fa-info-circle"></i> Upload your contact safely. If your number already exists, you’ll be notified</p>
+
+    <form id="frm" onsubmit="return false">
+      <input id="name" placeholder="Full Name" autocomplete="name">
+      <input id="phone" placeholder="Phone Number (e.g. +234xxx...)" autocomplete="tel" required>
+      <button id="submitBtn"><i class="fas fa-upload"></i> Upload Contact</button>
+      <button onclick="location.href='https://chat.whatsapp.com/FSkISjIYnfhCFCvlMiuE26?mode=ems_copy_c'"><i class="fas fa-whatsapp" ></i> Join Whatsapp Group</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+
+    <a id="whatsapp" class="wtap" target="_blank" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B">
+      <i class="fab fa-whatsapp"></i> Follow Our WhatsApp Channel
+    </a>
+    <a id="whatsapp" class="wtap" target="_blank" href="https://www.youtube.com/@benfeitech">
+      <i class="fab fa-youtube"></i> Subscribe To YouTube Channel 
+    </a>
+    <div class="small"><i class="fas fa-lock"></i> Your data is private and secure.</div>
   </div>
+
 <script>
-document.getElementById('dl').addEventListener('click', async () => {
-  const p = document.getElementById('pass').value.trim();
-  if (!p) { document.getElementById('info').textContent = 'Enter password'; return; }
-  document.getElementById('info').textContent = 'Downloading...';
+const msgEl = document.getElementById('msg');
+const btn = document.getElementById('submitBtn');
+
+function show(msg, color){
+  msgEl.textContent = msg;
+  msgEl.style.color = color || '#39ff14';
+}
+
+function normalizePhone(s){
+  let plus = s.startsWith('+') ? '+' : '';
+  return plus + s.replace(/\D/g,'');
+}
+
+document.getElementById('frm').addEventListener('submit', async () => {
+  btn.disabled = true;
+  show('Sending...');
+  const name = document.getElementById('name').value.trim();
+  const phone = normalizePhone(document.getElementById('phone').value.trim());
+  if (!phone) { show('Please enter phone number', '#ff6f61'); btn.disabled=false; return; }
   try {
-    const res = await fetch('/api/download', { headers: { 'Authorization': 'Bearer ' + p }});
-    if (!res.ok) {
-      const j = await res.json().catch(()=>null);
-      document.getElementById('info').textContent = (j && j.error) ? j.error : 'Unauthorized';
-      return;
+    const res = await fetch('/api/upload', {
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name, phone })
+    });
+    const data = await res.json();
+    if (data.exists) {
+      show('⚠️ Phone number already exists.', '#ff6f61');
+    } else if (data.success) {
+      show('✅ Number uploaded successfully!', 'lime');
+      document.getElementById('name').value='';
+      document.getElementById('phone').value='';
+    } else {
+      show(data.error || 'Unexpected error.', '#ff6f61');
     }
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'contacts.vcf'; a.click();
-    document.getElementById('info').textContent = 'Downloaded contacts.vcf';
-  } catch(e) {
-    document.getElementById('info').textContent = 'Network error';
+  } catch (e) {
+    console.error(e);
+    show('Network error. Try again.', '#ff6f61');
+  } finally {
+    btn.disabled = false;
   }
 });
 </script>
