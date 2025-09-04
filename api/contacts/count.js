@@ -1,22 +1,25 @@
-// pages/api/contacts/count.js
-import { supabaseAdmin } from "../../lib/supabaseServer";
+// routes/count.js
+import express from "express";
+import { supabaseAdmin } from "../lib/supabaseServer.js";
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+const router = express.Router();
 
+router.get("/contacts/count", async (req, res) => {
   try {
-    // count number of rows in contacts table
     const { count, error } = await supabaseAdmin
       .from("contacts")
       .select("*", { count: "exact", head: true });
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error:", error);
+      return res.status(500).json({ error: error.message });
+    }
 
-    return res.status(200).json({ count });
+    res.json({ count: count ?? 0 });
   } catch (err) {
-    console.error("Error fetching contacts count:", err.message);
-    return res.status(500).json({ error: "Failed to fetch count" });
+    console.error("Error fetching contacts count:", err);
+    res.status(500).json({ error: "Failed to fetch count" });
   }
-}
+});
+
+export default router;
