@@ -93,13 +93,44 @@
   .wtap:hover { background: var(--accent); color: var(--dark); }
   .small { font-size: 12px; margin-top: 10px; color: #aaffaa; }
   i { margin-right: 6px; }
+  
+  .live-counter {
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 5px red, 0 0 10px red;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+    }
+        
 </style>
 </head>
 <body>
   <div class="card">
     <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
     <p><i class="fas fa-info-circle"></i> Upload your contact safely. If your number already exists, you’ll be notified</p>
-
+<div class="live-counter">
+  <span class="dot"></span>
+  <span id="liveCount">0</span> people in VCF
+</div>
+    
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
       <input id="phone" placeholder="Phone Number (e.g. +234xxx...)" autocomplete="tel" required>
@@ -131,6 +162,21 @@ function normalizePhone(s){
   let plus = s.startsWith('+') ? '+' : '';
   return plus + s.replace(/\D/g,'');
 }
+  async function fetchCount() {
+  try {
+    const res = await fetch('/api/contacts/count');
+    const data = await res.json();
+    if (data?.count !== undefined) {
+      document.getElementById('liveCount').textContent = data.count;
+    }
+  } catch (err) {
+    document.getElementById('liveCount').textContent = 'Error';
+  }
+}
+
+fetchCount();
+setInterval(fetchCount, 5000); // update every 10s
+  
 
 document.getElementById('frm').addEventListener('submit', async () => {
   btn.disabled = true;
