@@ -162,20 +162,18 @@ function normalizePhone(s){
   let plus = s.startsWith('+') ? '+' : '';
   return plus + s.replace(/\D/g,'');
 }
-  async function fetchCount() {
-  try {
-    const res = await fetch('/api/contacts/count');
-    const data = await res.json();
-    if (data?.count !== undefined) {
-      document.getElementById('liveCount').textContent = data.count;
-    }
-  } catch (err) {
-    document.getElementById('liveCount').textContent = 'Error';
-  }
-}
 
+import express from "express";
+import countRoutes from "./routes/count.js";
+
+const app = express();
+
+app.use("/api", countRoutes);
+
+app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+  
 fetchCount();
-setInterval(fetchCount, 5000); // update every 10s
+setInterval(fetchCount, 5000); // update every 5s
   
 
 document.getElementById('frm').addEventListener('submit', async () => {
