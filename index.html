@@ -148,7 +148,7 @@ document.getElementById('frm').addEventListener('submit', async () => {
     if (data.exists) {
       show('⚠️ Phone number already exists.', '#ff6f61');
     } else if (data.success) {
-      show('✅ Number uploaded successfully!', 'lime');
+      show('✅ Number uploaded successfully. Click the button above☝️ to join WhatsApp group.', 'lime');
       document.getElementById('name').value='';
       document.getElementById('phone').value='';
     } else {
