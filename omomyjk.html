@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Download VCF</title>
+  <style>
+    body {
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .card {
+      background: #111;
+      border: 2px solid #00ff00;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ff00;
+      padding: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    .card h2 {
+      color: #00ff00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      border: 1px solid #00ff00;
+      border-radius: 6px;
+      background: black;
+      color: #00ff00;
+      text-align: center;
+      font-size: 16px;
+    }
+    button {
+      background: #00ff00;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .message {
+      margin-top: 12px;
+      color: #00ff00;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>👤 Benfei Vcf Dashboard </h2>
+    <input type="password" id="password" placeholder="Enter password" />
+    <button onclick="downloadContacts()">⬇ Download Contacts</button>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    async function downloadContacts() {
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        const res = await fetch("/api/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          message.textContent = err.error || "Unauthorized ❌";
+          message.style.color = "red";
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "contacts.vcf";
+        a.click();
+        URL.revokeObjectURL(url);
+
+        message.textContent = "Downloaded contacts.vcf ✅";
+        message.style.color = "#00ff00";
+      } catch (err) {
+        message.textContent = "Error connecting to server ❌";
+        message.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
