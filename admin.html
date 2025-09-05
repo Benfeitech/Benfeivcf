@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Download VCF</title>
+  <title>Admin — Dashboard</title>
   <style>
     body {
       background: black;
@@ -20,15 +20,13 @@
       box-shadow: 0 0 20px #00ff00;
       padding: 20px;
       text-align: center;
-      max-width: 400px;
+      max-width: 500px;
       width: 100%;
+      color: #00ff00;
     }
     .card h2 {
       color: #00ff00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      margin-bottom: 15px;
     }
     input[type="password"] {
       width: 100%;
@@ -50,62 +48,131 @@
       font-weight: bold;
       cursor: pointer;
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      margin: 5px 0;
     }
-    button:hover {
-      opacity: 0.9;
+    button:hover { opacity: 0.9; }
+    .message { margin-top: 12px; }
+    .count { font-size: 18px; margin-bottom: 10px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      display: none;
     }
-    .message {
-      margin-top: 12px;
-      color: #00ff00;
+    table, th, td {
+      border: 1px solid #00ff00;
+      padding: 8px;
+      text-align: center;
     }
+    th { background: #222; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>👤 Admin — Download VCF</h2>
+    <h2>👤 Admin Dashboard</h2>
     <input type="password" id="password" placeholder="Enter password" />
-    <button onclick="downloadContacts()">⬇ Download Contacts</button>
+    
+    <div class="count" id="count">Loading members...</div>
+
+    <button onclick="downloadContacts()">📥 Download VCF</button>
+    <button onclick="downloadPDF()">📄 Download PDF</button>
+    <button onclick="toggleMembers()">👥 View Members</button>
+
     <div id="message" class="message"></div>
+
+    <table id="membersTable">
+      <thead>
+        <tr><th>Name</th><th>Phone</th></tr>
+      </thead>
+      <tbody id="membersBody"></tbody>
+    </table>
   </div>
 
   <script>
+    const message = document.getElementById("message");
+
+    async function fetchCount() {
+      try {
+        const res = await fetch("/api/count");
+        const data = await res.json();
+        document.getElementById("count").textContent = 
+          `👥 Total Members: ${data.count}`;
+      } catch {
+        document.getElementById("count").textContent = "Error loading count ❌";
+      }
+    }
+
+    async function toggleMembers() {
+      const table = document.getElementById("membersTable");
+      const body = document.getElementById("membersBody");
+      
+      if (table.style.display === "table") {
+        table.style.display = "none";
+        return;
+      }
+      
+      try {
+        const res = await fetch("/api/list");
+        const data = await res.json();
+        body.innerHTML = "";
+        data.forEach(member => {
+          const row = `<tr><td>${member.name}</td><td>${member.phone}</td></tr>`;
+          body.innerHTML += row;
+        });
+        table.style.display = "table";
+      } catch {
+        message.textContent = "Error fetching members ❌";
+        message.style.color = "red";
+      }
+    }
+
     async function downloadContacts() {
       const password = document.getElementById("password").value;
-      const message = document.getElementById("message");
-
       try {
         const res = await fetch("/api/download", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password })
         });
-
-        if (!res.ok) {
-          const err = await res.json();
-          message.textContent = err.error || "Unauthorized ❌";
-          message.style.color = "red";
-          return;
-        }
-
+        if (!res.ok) throw new Error("Unauthorized");
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
-        a.download = "contacts.vcf";
-        a.click();
+        a.href = url; a.download = "contacts.vcf"; a.click();
         URL.revokeObjectURL(url);
-
         message.textContent = "Downloaded contacts.vcf ✅";
         message.style.color = "#00ff00";
-      } catch (err) {
-        message.textContent = "Error connecting to server ❌";
+      } catch {
+        message.textContent = "Unauthorized ❌";
         message.style.color = "red";
       }
     }
+
+    async function downloadPDF() {
+      const password = document.getElementById("password").value;
+      try {
+        const res = await fetch("/api/pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+        if (!res.ok) throw new Error("Unauthorized");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "contacts.pdf"; a.click();
+        URL.revokeObjectURL(url);
+        message.textContent = "Downloaded contacts.pdf ✅";
+        message.style.color = "#00ff00";
+      } catch {
+        message.textContent = "Unauthorized ❌";
+        message.style.color = "red";
+      }
+    }
+
+    // Fetch live count on load
+    fetchCount();
+    setInterval(fetchCount, 5000); // refresh every 5s
   </script>
 </body>
 </html>
