@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const { data, error } = await supabaseAdmin
       .from("contacts")
       .select("name, phone")
-      .order("id", { ascending: false });
+      .order("name", { ascending: true });
 
     if (error) throw error;
     res.json(data);
