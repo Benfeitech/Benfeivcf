@@ -103,28 +103,33 @@
     }
 
     async function toggleMembers() {
-      const table = document.getElementById("membersTable");
-      const body = document.getElementById("membersBody");
-      
-      if (table.style.display === "table") {
-        table.style.display = "none";
-        return;
-      }
-      
-      try {
-        const res = await fetch("/api/list");
-        const data = await res.json();
-        body.innerHTML = "";
-        data.forEach(member => {
-          const row = `<tr><td>${member.name}</td><td>${member.phone}</td></tr>`;
-          body.innerHTML += row;
-        });
-        table.style.display = "table";
-      } catch {
-        message.textContent = "Error fetching members ❌";
-        message.style.color = "red";
-      }
-    }
+  const table = document.getElementById("membersTable");
+  const body = document.getElementById("membersBody");
+  
+  if (table.style.display === "table") {
+    table.style.display = "none";
+    return;
+  }
+  
+  try {
+    const res = await fetch("/api/list");
+    const data = await res.json();
+    body.innerHTML = "";
+    data.forEach(member => {
+      const row = `<tr><td>${member.name}</td><td>${member.phone}</td></tr>`;
+      body.innerHTML += row;
+    });
+    table.style.display = "table";
+
+    // 👇 Force scroll to top of the table
+    table.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch {
+    message.textContent = "Error fetching members ❌";
+    message.style.color = "red";
+  }
+}
+
 
     async function downloadContacts() {
       const password = document.getElementById("password").value;
