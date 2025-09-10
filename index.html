@@ -22,7 +22,19 @@
     background: radial-gradient(circle at top left, #001100, var(--dark));
     font-family: 'Segoe UI', Roboto, sans-serif;
     color: var(--text);
+    position: relative;
+    overflow: hidden;
   }
+
+  /* particles background */
+  #particles-js {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1; /* keep it behind */
+    background: radial-gradient(circle at top left, #001100, var(--dark));
+  }
+
   .card {
     width: 95%;
     max-width: 440px;
@@ -34,6 +46,7 @@
     text-align: center;
     animation: glow 3s infinite alternate;
     transition: transform 0.3s ease;
+    z-index: 1;
   }
   .card:hover { transform: scale(1.02); }
   @keyframes glow {
@@ -96,6 +109,9 @@
 </style>
 </head>
 <body>
+  <!-- particles container -->
+  <div id="particles-js"></div>
+
   <div class="card">
     <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
     <p><i class="fas fa-info-circle"></i> Upload your contact safely. If your number already exists, you’ll be notified</p>
@@ -162,5 +178,57 @@ document.getElementById('frm').addEventListener('submit', async () => {
   }
 });
 </script>
+
+<!-- particles.js library -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 120, density: { enable: true, value_area: 800 } },
+    color: { value: ["#39ff14", "#14ffec"] }, // neon green + cyan
+    shape: { type: "circle" },
+    opacity: { value: 1, random: false }, // solid
+    size: { value: 4, random: true },
+    line_linked: {
+      enable: true,
+      distance: 150,
+      color: "#14ffec",
+      opacity: 0.9,
+      width: 2
+    },
+    move: {
+      enable: true,
+      speed: 2.5,
+      random: true,
+      out_mode: "out"
+    }
+  },
+  interactivity: {
+    detect_on: "canvas",
+    events: {
+      onhover: { enable: true, mode: "repulse" },
+      onclick: { enable: true, mode: "push" },
+      resize: true
+    },
+    modes: {
+      repulse: { distance: 120, duration: 0.4 },
+      push: { particles_nb: 5 }
+    }
+  },
+  retina_detect: true
+});
+
+// extra CSS glow effect
+const style = document.createElement("style");
+style.innerHTML = `
+  #particles-js canvas {
+    filter: drop-shadow(0 0 6px #39ff14)
+            drop-shadow(0 0 12px #14ffec);
+  }
+`;
+document.head.appendChild(style);
+</script>
+
 </body>
-  </html>
+      </html>
+  
