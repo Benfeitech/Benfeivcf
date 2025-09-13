@@ -70,16 +70,34 @@
     padding: 10px;
     background: rgba(0, 30, 0, 0.4);
     border-radius: 10px;
-    border: 1px dashed var(--neon);
+    border: none;
   }
-  .counter i {
+
+  .live-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(45deg, var(--neon), var(--warn));
+    border-radius: 50%;
     margin-right: 10px;
-    color: var(--accent);
+    animation: blink 1.5s infinite alternate;
   }
-  .counter span {
+  
+  @keyframes blink {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 5px var(--neon); }
+    100% { transform: scale(1.2); opacity: 0.4; box-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon); }
+  }
+
+  .counter-text {
     font-weight: bold;
     color: var(--neon);
     font-size: 18px;
+    margin-right: 8px; /* Correctly space the number and the text */
+  }
+
+  .counter-description {
+    font-size: 16px;
+    color: var(--warn);
   }
   
   input {
@@ -131,17 +149,16 @@
 </style>
 </head>
 <body>
-  <!-- particles container -->
   <div id="particles-js"></div>
 
   <div class="card">
     <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
     <p><i class="fas fa-info-circle"></i> Upload only your WhatsApp contact here with your country code at the beginning </p>
     
-    <!-- Live counter display -->
     <div class="counter">
-      <i class="fas fa-users"></i>
-      <h6><span id="contactCount">Loading...</span> live contacts in VCF</h6>
+      <span class="live-indicator"></span>
+      <span id="contactCount" class="counter-text">Loading...</span>
+      <span class="counter-description">live contacts in VCF</span>
     </div>
 
     <form id="frm" onsubmit="return false">
@@ -235,7 +252,6 @@ document.getElementById('frm').addEventListener('submit', async () => {
 });
 </script>
 
-<!-- particles.js library -->
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
 particlesJS("particles-js", {
@@ -286,4 +302,5 @@ document.head.appendChild(style);
 </script>
 
 </body>
-</html>
+      </html>
+  
