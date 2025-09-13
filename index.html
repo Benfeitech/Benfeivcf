@@ -60,6 +60,28 @@
     text-shadow: 0 0 10px var(--neon);
   }
   p { margin: 6px 0 20px; font-size: 14px; color: #b3ffb3; }
+  
+  /* Counter styles */
+  .counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(0, 30, 0, 0.4);
+    border-radius: 10px;
+    border: 1px solid var(--neon);
+  }
+  .counter i {
+    margin-right: 10px;
+    color: var(--accent);
+  }
+  .counter span {
+    font-weight: bold;
+    color: var(--neon);
+    font-size: 18px;
+  }
+  
   input {
     width: 100%;
     padding: 12px;
@@ -114,7 +136,13 @@
 
   <div class="card">
     <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
-    <p><i class="fas fa-info-circle"></i> Upload your contact safely. If your number already exists, you’ll be notified</p>
+    <p><i class="fas fa-info-circle"></i> Upload your contact safely. If your number already exists, you'll be notified</p>
+    
+    <!-- Live counter display -->
+    <div class="counter">
+      <i class="fas fa-users"></i>
+      <span id="contactCount">Loading...</span> contacts in our database
+    </div>
 
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
@@ -137,6 +165,31 @@
 <script>
 const msgEl = document.getElementById('msg');
 const btn = document.getElementById('submitBtn');
+const contactCountEl = document.getElementById('contactCount');
+
+// Function to update the contact counter
+async function updateContactCounter() {
+  try {
+    const response = await fetch('/api/contacts/count');
+    const data = await response.json();
+    
+    if (data.count !== undefined) {
+      contactCountEl.textContent = data.count.toLocaleString();
+    } else {
+      contactCountEl.textContent = 'Error';
+      console.error('Unexpected response format:', data);
+    }
+  } catch (error) {
+    console.error('Failed to fetch contact count:', error);
+    contactCountEl.textContent = 'Error';
+  }
+}
+
+// Initial counter update
+updateContactCounter();
+
+// Update counter every 30 seconds
+setInterval(updateContactCounter, 30000);
 
 function show(msg, color){
   msgEl.textContent = msg;
@@ -167,6 +220,9 @@ document.getElementById('frm').addEventListener('submit', async () => {
       show('✅ Number uploaded successfully. Click the button above☝️ to join WhatsApp group.', 'lime');
       document.getElementById('name').value='';
       document.getElementById('phone').value='';
+      
+      // Update the counter after successful upload
+      updateContactCounter();
     } else {
       show(data.error || 'Unexpected error.', '#ff6f61');
     }
@@ -230,5 +286,4 @@ document.head.appendChild(style);
 </script>
 
 </body>
-      </html>
-  
+</html>
