@@ -170,7 +170,7 @@ const contactCountEl = document.getElementById('contactCount');
 // Function to update the contact counter
 async function updateContactCounter() {
   try {
-    const response = await fetch('/api/contacts/count');
+    const response = await fetch('/api/count');
     const data = await response.json();
     
     if (data.count !== undefined) {
