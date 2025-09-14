@@ -143,7 +143,7 @@
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url; a.download = "BenfeiBoost.vcf"; a.click();
+        a.href = url; a.download = "BenfeiVIP.vcf"; a.click();
         URL.revokeObjectURL(url);
         message.textContent = "Downloaded BenfeiBoost.vcf ✅";
         message.style.color = "#00ff00";
