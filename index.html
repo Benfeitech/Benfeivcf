@@ -102,12 +102,23 @@
   }
   
   /* Progress bar */
+  .progress-message-container {
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  .progress-message {
+    color: var(--neon);
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 0 5px var(--neon);
+  }
+
   .progress-container {
     width: 100%;
     height: 16px;
     background: #111;
     border-radius: 8px;
-    margin-top: 10px;
     margin-bottom: 10px;
     position: relative;
     border: 1px solid rgba(57, 255, 20, 0.5);
@@ -121,18 +132,6 @@
     transition: width 0.5s ease-in-out;
     box-shadow: 0 0 8px var(--neon), 0 0 12px var(--neon);
     position: relative;
-  }
-  
-  #progressBarText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--neon);
-    font-weight: bold;
-    font-size: 12px;
-    text-shadow: 0 0 5px var(--neon);
-    z-index: 2;
   }
 
   input {
@@ -228,13 +227,15 @@
       <span id="contactCount" class="counter-text">Loading...</span>
       <span class="counter-description"> contacts in VCF</span>
     </div>
+    
+    <div class="progress-message-container">
+      <span id="progress-message" class="progress-message">0% of target reached</span>
+    </div>
 
     <div class="progress-container">
-      <div id="progressBar" class="progress-bar">
-        <span id="progressBarText" class="neon-text">0%</span>
-      </div>
+      <div id="progressBar" class="progress-bar"></div>
     </div>
-    <p id="downloadMessage" class="neon-text">Vcf download initiates at 1000 contacts</p>
+    <p id="downloadMessage" class="neon-text">Vcf download commences when contacts reaches 1000</p>
 
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
@@ -262,7 +263,7 @@ const msgEl = document.getElementById('msg');
 const btn = document.getElementById('submitBtn');
 const contactCountEl = document.getElementById('contactCount');
 const progressBarEl = document.getElementById('progressBar');
-const progressBarTextEl = document.getElementById('progressBarText');
+const progressMessageEl = document.getElementById('progress-message'); // New element to target
 const downloadMessageEl = document.getElementById('downloadMessage');
 const whatsappGroupURL = 'https://chat.whatsapp.com/FSkISjIYnfhCFCvlMiuE26?mode=ems_copy_c';
 const targetCount = 1000;
@@ -274,12 +275,15 @@ async function updateContactCounter() {
     const data = await response.json();
     
     if (data.count !== undefined) {
-      contactCountEl.textContent = data.count.toLocaleString();
+      const currentCount = data.count;
+      contactCountEl.textContent = currentCount.toLocaleString();
       
       // Update progress bar
-      let percentage = Math.min(100, (data.count / targetCount) * 100);
+      let percentage = Math.min(100, (currentCount / targetCount) * 100);
       progressBarEl.style.width = `${percentage}%`;
-      progressBarTextEl.textContent = `${Math.round(percentage)}%`;
+      
+      // Update the new progress message element with the full text
+      progressMessageEl.textContent = `${Math.round(percentage)}% of the contacts in storage already; target is ${targetCount} contacts.`;
 
     } else {
       contactCountEl.textContent = 'Error';
@@ -414,4 +418,5 @@ document.head.appendChild(style);
   gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
 </script>
 </body>
-</html>
+  </html>
+  
