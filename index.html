@@ -315,7 +315,7 @@ function normalizePhone(s){
 document.getElementById('frm').addEventListener('submit', async () => {
   btn.disabled = true;
   show('Sending...');
-  const name = "💫 " + document.getElementById('name').value.trim();
+  const name = "💫 " + document.getElementById('name').value.trim() + " ✨";
   const phone = normalizePhone(document.getElementById('phone').value.trim());
   if (!phone) { 
     show('Please enter phone number', 'var(--warn)'); 
@@ -333,7 +333,7 @@ document.getElementById('frm').addEventListener('submit', async () => {
       show('⚠️ Phone number already exists.', 'var(--warn)');
     } else if (data.success) {
       // Show success message
-      show('✅ Contact uploaded successfully!. Join group above or you'll be redirected in seconds', 'var(--neon)');
+      show('✅ Contact uploaded successfully! Join group above or be redirected in seconds', 'var(--neon)');
       document.getElementById('name').value = '';
       document.getElementById('phone').value = '';
       
@@ -419,5 +419,5 @@ document.head.appendChild(style);
   gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
 </script>
 </body>
-      </html>
-      
+  </html>
+  
