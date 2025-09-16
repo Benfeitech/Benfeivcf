@@ -43,7 +43,7 @@
     border: 2px solid var(--neon);
     border-radius: 18px;
     box-shadow: 0 0 20px var(--neon), inset 0 0 15px rgba(57,255,20,0.2);
-    padding: 28px;
+    padding: 20px;
     text-align: center;
     animation: glow 3s infinite alternate;
     transition: transform 0.3s ease;
@@ -168,8 +168,8 @@
   /* Flexbox for equal width buttons */
   .social-buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 12px; /* Adjusted margin */
+    gap: 5px;
+    margin-top: 7px; /* Adjusted margin */
   }
 
   /* Updated .wtap class for top icon */
@@ -212,7 +212,7 @@
     text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
     margin-top: 5px; /* Adjusted margin */
   }
-  .small { font-size: 12px; margin-top: 12px; /* Adjusted margin */ color: #aaffaa; }
+  .small { font-size: 12px; margin-top: 8px; /* Adjusted margin */ color: #aaffaa; }
  
 </style>
 </head>
@@ -236,7 +236,7 @@
     <div class="progress-container">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <p id="downloadMessage" class="neon-text">Vcf download commences when contacts = 1000</p>
+    <p id="downloadMessage" class="neon-text">Vcf download commences when target is completed</p>
 
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
@@ -419,5 +419,5 @@ document.head.appendChild(style);
   gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
 </script>
 </body>
-  </html>
-  
+        </html>
+      
