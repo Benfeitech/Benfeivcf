@@ -120,6 +120,18 @@
     border-radius: 8px;
     transition: width 0.5s ease-in-out;
     box-shadow: 0 0 8px var(--neon), 0 0 12px var(--neon);
+    position: relative;
+  }
+  
+  #progressBarText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--dark);
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 2;
   }
 
   input {
@@ -152,19 +164,38 @@
   }
   button:hover { background: var(--accent); transform: translateY(-2px); }
   .msg { margin-top: 14px; font-size: 14px; min-height: 18px; }
-  .wtap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  
+  /* Flexbox for equal width buttons */
+  .social-buttons {
+    display: flex;
+    gap: 10px;
     margin-top: 16px;
-    text-decoration: none;
-    color: var(--accent);
-    font-weight: 600;
-    border: 1px solid var(--accent);
-    padding: 10px 14px;
-    border-radius: 8px;
-    transition: all 0.3s;
   }
+
+  /* Update the .wtap class in your style block */
+.wtap {
+  display: flex;
+  flex-direction: column; /* Change from row to column */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  flex: 1;
+  max-width: 50%;
+  text-align: center; /* Ensures the text is centered */
+}
+
+/* Update the i element's CSS */
+i {
+  margin-right: 0; /* Remove the right margin */
+  margin-bottom: 6px; /* Add a bottom margin to create space between icon and text */
+}
+
   .wtap:hover { background: var(--accent); color: var(--dark); }
   
   /* Bouncing keyframe animation for WhatsApp button */
@@ -176,9 +207,12 @@
     40% { transform: translateY(-10px); }
     60% { transform: translateY(-5px); }
   }
-
+  .neon-text {
+    color: var(--neon);
+    text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
+  }
   .small { font-size: 12px; margin-top: 30px; color: #aaffaa; }
-  i { margin-right: 6px; }
+ 
 </style>
 </head>
 <body>
@@ -195,8 +229,11 @@
     </div>
 
     <div class="progress-container">
-      <div id="progressBar" class="progress-bar"></div>
+      <div id="progressBar" class="progress-bar">
+        <span id="progressBarText" class="neon-text">0%</span>
+      </div>
     </div>
+    <p id="downloadMessage" class="neon-text" style="display: none;"></p>
 
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
@@ -206,13 +243,16 @@
     </form>
 
     <div class="msg" id="msg"></div>
+    
+    <div class="social-buttons">
+      <a id="whatsapp" class="wtap bounce" target="_blank" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B">
+        <i class="fab fa-whatsapp"></i> Follow Our WhatsApp Channel
+      </a>
+      <a id="youtube" class="wtap bounce" target="_blank" href="https://www.youtube.com/@benfeitech">
+        <i class="fab fa-youtube"></i> Subscribe To YouTube Channel 
+      </a>
+    </div>
 
-    <a id="whatsapp" class="wtap bounce" target="_blank" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B">
-      <i class="fab fa-whatsapp"></i> Follow Our WhatsApp Channel
-    </a>
-    <a id="youtube" class="wtap" target="_blank" href="https://www.youtube.com/@benfeitech">
-      <i class="fab fa-youtube"></i> Subscribe To YouTube Channel 
-    </a>
     <div class="small">Powered by Benfei Tech</div>
   </div>
 
@@ -221,6 +261,8 @@ const msgEl = document.getElementById('msg');
 const btn = document.getElementById('submitBtn');
 const contactCountEl = document.getElementById('contactCount');
 const progressBarEl = document.getElementById('progressBar');
+const progressBarTextEl = document.getElementById('progressBarText');
+const downloadMessageEl = document.getElementById('downloadMessage');
 const whatsappGroupURL = 'https://chat.whatsapp.com/FSkISjIYnfhCFCvlMiuE26?mode=ems_copy_c';
 const targetCount = 1000;
 
@@ -232,9 +274,20 @@ async function updateContactCounter() {
     
     if (data.count !== undefined) {
       contactCountEl.textContent = data.count.toLocaleString();
+      
       // Update progress bar
-      const percentage = Math.min(100, (data.count / targetCount) * 100);
+      let percentage = Math.min(100, (data.count / targetCount) * 100);
       progressBarEl.style.width = `${percentage}%`;
+      progressBarTextEl.textContent = `${Math.round(percentage)}%`;
+
+      // Update download message
+      if (data.count >= targetCount) {
+        downloadMessageEl.textContent = `download initiated at ${targetCount} contacts`;
+        downloadMessageEl.style.display = 'block';
+      } else {
+        downloadMessageEl.style.display = 'none';
+      }
+
     } else {
       contactCountEl.textContent = 'Error';
       console.error('Unexpected response format:', data);
@@ -252,8 +305,8 @@ updateContactCounter();
 setInterval(updateContactCounter, 3000);
 
 function show(msg, color){
-  msgEl.textContent = msg;
-  msgEl.style.color = color || '#39ff14';
+  msgEl.innerHTML = msg;
+  msgEl.style.color = color || 'var(--neon)';
 }
 
 function normalizePhone(s){
@@ -266,7 +319,7 @@ document.getElementById('frm').addEventListener('submit', async () => {
   show('Sending...');
   const name = "💙 " + document.getElementById('name').value.trim();
   const phone = normalizePhone(document.getElementById('phone').value.trim());
-  if (!phone) { show('Please enter phone number', '#ff6f61'); btn.disabled=false; return; }
+  if (!phone) { show('Please enter phone number', 'var(--warn)'); btn.disabled=false; return; }
   try {
     const res = await fetch('/api/upload', {
       method:'POST',
@@ -275,26 +328,33 @@ document.getElementById('frm').addEventListener('submit', async () => {
     });
     const data = await res.json();
     if (data.exists) {
-      show('⚠️ Phone number already exists.', '#ff6f61');
+      show('⚠️ Phone number already exists.', 'var(--warn)');
     } else if (data.success) {
-      // Show success message and redirect after 3 seconds
-      show('✅ Contact successfully uploaded!', 'lime');
+      // Show success message
+      show('✅ Contact uploaded successfully!', 'var(--neon)');
       document.getElementById('name').value = '';
       document.getElementById('phone').value = '';
       
       // Update the counter and progress bar after successful upload
       updateContactCounter();
       
+      // Set the 3-second redirect timer
       setTimeout(() => {
         show('Redirecting to WhatsApp group...', 'var(--accent)');
-        window.location.href = whatsappGroupURL;
-      }, 3000);
+        
+        // Wait another 1.5 seconds before redirecting
+        setTimeout(() => {
+          window.location.href = whatsappGroupURL;
+        }, 1500); // 1.5 seconds
+        
+      }, 1500); // 1.5 seconds
+      
     } else {
-      show(data.error || 'Unexpected error.', '#ff6f61');
+      show(data.error || 'Unexpected error.', 'var(--warn)');
     }
   } catch (e) {
     console.error(e);
-    show('Network error. Try again.', '#ff6f61');
+    show('Network error. Try again.', 'var(--warn)');
   } finally {
     btn.disabled = false;
   }
@@ -357,4 +417,5 @@ document.head.appendChild(style);
   gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
 </script>
 </body>
-</html>
+  </html>
+  
