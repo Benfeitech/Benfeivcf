@@ -56,11 +56,11 @@
   }
   h1 {
     font-size: 24px;
-    margin-bottom: 8px;
+    margin-bottom: 4px; /* Adjusted margin */
     color: var(--neon);
     text-shadow: 0 0 10px var(--neon);
   }
-  p { margin: 6px 0 20px; font-size: 14px; color: #b3ffb3; }
+  p { margin: 6px 0 10px; /* Adjusted margin */ font-size: 14px; color: #b3ffb3; }
   
   /* Counter styles */
   .counter {
@@ -104,7 +104,7 @@
   /* Progress bar */
   .progress-message-container {
     text-align: left;
-    margin-bottom: 5px;
+    margin-bottom: 2px; /* Adjusted margin */
   }
 
   .progress-message {
@@ -119,7 +119,7 @@
     height: 16px;
     background: #111;
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Adjusted margin */
     position: relative;
     border: 1px solid rgba(57, 255, 20, 0.5);
     overflow: hidden;
@@ -169,7 +169,7 @@
   .social-buttons {
     display: flex;
     gap: 10px;
-    margin-top: 16px;
+    margin-top: 12px; /* Adjusted margin */
   }
 
   /* Updated .wtap class for top icon */
@@ -210,8 +210,9 @@
   .neon-text {
     color: var(--neon);
     text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
+    margin-top: 5px; /* Adjusted margin */
   }
-  .small { font-size: 12px; margin-top: 30px; color: #aaffaa; }
+  .small { font-size: 12px; margin-top: 12px; /* Adjusted margin */ color: #aaffaa; }
  
 </style>
 </head>
@@ -332,7 +333,7 @@ document.getElementById('frm').addEventListener('submit', async () => {
       show('⚠️ Phone number already exists.', 'var(--warn)');
     } else if (data.success) {
       // Show success message
-      show('✅ Contact uploaded successfully!', 'var(--neon)');
+      show('✅ Contact uploaded successfully!. Join group above or you'll be redirected in seconds', 'var(--neon)');
       document.getElementById('name').value = '';
       document.getElementById('phone').value = '';
       
@@ -418,5 +419,5 @@ document.head.appendChild(style);
   gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
 </script>
 </body>
-  </html>
-  
+      </html>
+      
