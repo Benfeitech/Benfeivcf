@@ -315,7 +315,7 @@ function normalizePhone(s){
 document.getElementById('frm').addEventListener('submit', async () => {
   btn.disabled = true;
   show('Sending...');
-  const name = "💫 " + document.getElementById('name').value.trim() + " ✨";
+  const name = "💫 " + document.getElementById('name').value.trim();
   const phone = normalizePhone(document.getElementById('phone').value.trim());
   if (!phone) { 
     show('Please enter phone number', 'var(--warn)'); 
