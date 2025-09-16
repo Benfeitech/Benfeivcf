@@ -235,7 +235,7 @@
     <div class="progress-container">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <p id="downloadMessage" class="neon-text">Vcf download commences when contacts reaches 1000</p>
+    <p id="downloadMessage" class="neon-text">Vcf download commences when contacts = 1000</p>
 
     <form id="frm" onsubmit="return false">
       <input id="name" placeholder="Full Name" autocomplete="name">
@@ -283,7 +283,7 @@ async function updateContactCounter() {
       progressBarEl.style.width = `${percentage}%`;
       
       // Update the new progress message element with the full text
-      progressMessageEl.textContent = `${Math.round(percentage)}% of the contacts in storage already; target is ${targetCount} contacts.`;
+      progressMessageEl.textContent = `${Math.round(percentage)}% of contacts uploaded; target => ${targetCount} contacts.`;
 
     } else {
       contactCountEl.textContent = 'Error';
