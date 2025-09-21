@@ -208,9 +208,15 @@
     60% { transform: translateY(-5px); }
   }
   .neon-text {
+    animation: fad 1.5s infinite;
     color: var(--neon);
     text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
     margin-top: 5px; /* Adjusted margin */
+  }
+  @keyframes fad {
+            0% { opacity: 0.2;}
+            50% { opacity: 0.6;}
+            100% { opacity: 1;}                        
   }
   .small { font-size: 12px; margin-top: 8px; /* Adjusted margin */ color: #aaffaa; }
  
