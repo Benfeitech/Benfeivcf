@@ -67,27 +67,52 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       iti.setNumber(""); // clear the intl-tel-input field
 
       Swal.fire({
-        icon: "success",
-        title: "Contact Uploaded!",
-        html: `
-          <p>Your contact has been successfully uploaded 🎉</p><br>
-          <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p>
-          <p>Join our WhatsApp Channel below 👇 for VCF</p>
-          <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" 
-            class="join-btn" style="display:inline-block;margin-top:15px;text-decoration:none;">
-            <i class="fa-brands fa-whatsapp"></i> Join Channel
-          </a>
-        `,
-        confirmButtonText: "Done",
-        confirmButtonColor: "#1e60d6",
-      });
-
-      updateMemberCount(); // refresh counter
-    } else {
-      toastr.error("Something went wrong. Please try again.");
+  iconHtml: `
+    <div style="display:flex; justify-content:center; align-items:center;">
+      <div style="width:70px; height:70px; border-radius:50%; background:#e6f9ea; display:flex; justify-content:center; align-items:center;">
+        <i class="fa fa-check" style="color:#22c55e; font-size:38px;"></i>
+      </div>
+    </div>
+  `,
+  title: "Contact Uploaded!",
+  html: `
+    <p style="margin:6px 0 12px 0; color:#555; font-size:15px;">
+      Your contact has been successfully uploaded 🎉
+    </p>
+    <div style="margin:0 auto; text-align:left; background:#f9f9f9; padding:12px 14px; border-radius:10px; width:90%;">
+      <p style="margin:4px 0;"><strong>Name:</strong> ${name}</p>
+      <p style="margin:4px 0;"><strong>Phone Number:</strong> ${fullNumber}</p>
+    </div>
+    <p style="margin-top:14px; font-size:14px; color:#444;">
+      Join our WhatsApp Channel below 👇 for VCF
+    </p>
+    <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B"
+       target="_blank"
+       style="display:inline-block; background:linear-gradient(to right, #25D366, #128C7E);
+              color:white; font-weight:600; border:none; padding:10px 24px;
+              border-radius:8px; text-decoration:none; margin-top:10px;
+              box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <i class="fa fa-whatsapp" style="margin-right:6px;"></i>Join Channel
+    </a>
+    <br>
+    <button style="margin-top:14px; background:#2563eb; color:white; border:none;
+                   border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:500;">
+      Done
+    </button>
+  `,
+  showConfirmButton: false,
+  customClass: {
+    popup: "custom-swal-card"
+  },
+  didOpen: () => {
+    const popup = document.querySelector(".swal2-popup");
+    if (popup) {
+      popup.style.borderRadius = "20px";
+      popup.style.padding = "1.3em 1em";
+      popup.style.width = "340px";
+      popup.style.boxShadow = "0 4px 16px rgba(0,0,0,0.1)";
     }
-  } catch (err) {
-    console.error(err);
-    toastr.error("Network error. Please check your connection.");
-  }
+    const title = document.querySelector(".swal2-title");
+    if (title) title.style.marginBottom = "0.2em";
+  },
 });
