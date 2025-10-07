@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Dashboard</title>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: #00ff00;
+      margin: 0;
+    }
+
+    .card {
+      background: #0b0b0b;
+      border: 2px solid #00ff00;
+      border-radius: 14px;
+      box-shadow: 0 0 25px #00ff00;
+      padding: 25px;
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+      color: #00ff00;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #00ff00;
+      border-radius: 8px;
+      background: black;
+      color: #00ff00;
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: linear-gradient(90deg, #00ff66, #00cc00);
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin: 6px 0;
+      transition: 0.3s ease;
+      color: black;
+    }
+
+    button:hover { opacity: 0.85; transform: scale(1.02); }
+
+    .message { margin-top: 12px; font-weight: 500; }
+
+    .count { font-size: 18px; margin-bottom: 15px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      display: none;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    th, td {
+      border: 1px solid #00ff00;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #111;
+      text-transform: uppercase;
+    }
+
+    .delete-btn {
+      background: #ff0000;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .delete-btn:hover {
+      background: #cc0000;
+    }
+
+    .delete-all-btn {
+      background: #ff3333;
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>👤 Benfei VCF Dashboard</h2>
+
+    <input type="password" id="password" placeholder="Enter admin password" />
+
+    <div class="count" id="count">Loading members...</div>
+
+    <button onclick="downloadContacts()">📥 Download VCF</button>
+    <button onclick="downloadPDF()">📄 Download PDF</button>
+    <button onclick="toggleMembers()">👥 View Members</button>
+    <button class="delete-all-btn" onclick="deleteAllContacts()">🗑️ Delete All Contacts</button>
+
+    <div id="message" class="message"></div>
+
+    <table id="membersTable">
+      <thead>
+        <tr><th>Name</th><th>Phone</th><th>Action</th></tr>
+      </thead>
+      <tbody id="membersBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const message = document.getElementById("message");
+
+    async function fetchCount() {
+      try {
+        const res = await fetch("/api/count");
+        const data = await res.json();
+        document.getElementById("count").textContent =
+          `👥 Total Members: ${data.count}`;
+      } catch {
+        document.getElementById("count").textContent = "Error loading count ❌";
+      }
+    }
+
+    async function toggleMembers() {
+      const table = document.getElementById("membersTable");
+      const body = document.getElementById("membersBody");
+      
+      if (table.style.display === "table") {
+        table.style.display = "none";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/list");
+        const data = await res.json();
+        body.innerHTML = "";
+        data.forEach(member => {
+          const row = `
+            <tr>
+              <td>${member.name}</td>
+              <td>${member.phone}</td>
+              <td><button class="delete-btn" onclick="deleteContact('${member.phone}')">Delete</button></td>
+            </tr>`;
+          body.innerHTML += row;
+        });
+        table.style.display = "table";
+      } catch {
+        message.textContent = "Error fetching members ❌";
+        message.style.color = "red";
+      }
+    }
+
+    async function deleteContact(phone) {
+      const password = document.getElementById("password").value.trim();
+      if (!password) return Swal.fire("Error", "Enter admin password first!", "warning");
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: `Delete contact ${phone}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch("/api/delete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ phone, password })
+            });
+            if (!res.ok) throw new Error("Unauthorized or failed");
+
+            Swal.fire("Deleted!", "Contact has been deleted.", "success");
+            toggleMembers(); // refresh table
+            fetchCount(); // update count
+          } catch {
+            Swal.fire("Error", "Failed to delete contact.", "error");
+          }
+        }
+      });
+    }
+
+    async function deleteAllContacts() {
+      const password = document.getElementById("password").value.trim();
+      if (!password) return Swal.fire("Error", "Enter admin password first!", "warning");
+
+      Swal.fire({
+        title: "Delete ALL Contacts?",
+        text: "This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ff0000",
+        confirmButtonText: "Yes, delete all"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch("/api/delete-all", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ password })
+            });
+            if (!res.ok) throw new Error("Unauthorized or failed");
+
+            Swal.fire("Deleted!", "All contacts have been deleted.", "success");
+            document.getElementById("membersBody").innerHTML = "";
+            document.getElementById("membersTable").style.display = "none";
+            fetchCount();
+          } catch {
+            Swal.fire("Error", "Failed to delete all contacts.", "error");
+          }
+        }
+      });
+    }
+
+    async function downloadContacts() {
+      const password = document.getElementById("password").value;
+      try {
+        const res = await fetch("/api/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+        if (!res.ok) throw new Error("Unauthorized");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "💫BenfeiMega✨.vcf"; a.click();
+        URL.revokeObjectURL(url);
+        message.textContent = "Downloaded 💫BenfeiMega✨.vcf ✅";
+        message.style.color = "#00ff00";
+      } catch {
+        message.textContent = "Unauthorized ❌";
+        message.style.color = "red";
+      }
+    }
+
+    async function downloadPDF() {
+      const password = document.getElementById("password").value;
+      try {
+        const res = await fetch("/api/pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+        if (!res.ok) throw new Error("Unauthorized");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "contacts.pdf"; a.click();
+        URL.revokeObjectURL(url);
+        message.textContent = "Downloaded contacts.pdf ✅";
+        message.style.color = "#00ff00";
+      } catch {
+        message.textContent = "Unauthorized ❌";
+        message.style.color = "red";
+      }
+    }
+
+    fetchCount();
+    setInterval(fetchCount, 5000);
+  </script>
+</body>
+</html>
