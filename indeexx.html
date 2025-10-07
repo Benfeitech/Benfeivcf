@@ -1,429 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Welcome to Benfei VCF</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  :root {
-    --neon: #39ff14;        /* neon green */
-    --dark: #0a0a0a;
-    --text: #e6ffe6;
-    --accent: #14ffec;      /* cyan accent */
-    --warn: #ff6f61;        /* coral red */
-    --target-count: 1000;
-  }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at top left, #001100, var(--dark));
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    color: var(--text);
-    position: relative;
-    overflow: hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benfei VCF — Upload Contacts</title>
 
-  /* particles background */
-  #particles-js {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -1; /* keep it behind */
-    background: radial-gradient(circle at top left, #001100, var(--dark));
-  }
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
 
-  .card {
-    width: 95%;
-    max-width: 440px;
-    background: rgba(20, 20, 20, 0.6);
-    border: 2px solid var(--neon);
-    border-radius: 18px;
-    box-shadow: 0 0 20px var(--neon), inset 0 0 15px rgba(57,255,20,0.2);
-    padding: 20px;
-    text-align: center;
-    animation: glow 3s infinite alternate;
-    transition: transform 0.3s ease;
-    z-index: 1;
-  }
-  .card:hover { transform: scale(1.02); }
-  @keyframes glow {
-    from { box-shadow: 0 0 20px var(--neon), inset 0 0 10px rgba(57,255,20,0.15); }
-    to { box-shadow: 0 0 40px var(--neon), inset 0 0 25px rgba(57,255,20,0.3); }
-  }
-  h1 {
-    font-size: 24px;
-    margin-bottom: 4px; /* Adjusted margin */
-    color: var(--neon);
-    text-shadow: 0 0 10px var(--neon);
-  }
-  p { margin: 6px 0 10px; /* Adjusted margin */ font-size: 14px; color: #b3ffb3; }
-  
-  /* Counter styles */
-  .counter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
-    padding: 10px;
-    background: rgba(0, 30, 0, 0.4);
-    border-radius: 10px;
-    border: none;
-  }
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 
-  .live-indicator {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    background: var(--neon);
-    border-radius: 50%;
-    margin-right: 10px;
-    animation: blink 1.5s infinite alternate;
-  }
-  
-  @keyframes blink {
-    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 5px var(--neon); }
-    100% { transform: scale(1.2); opacity: 0.4; box-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon); }
-  }
+  <!-- Toastr CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+  />
 
-  .counter-text {
-    font-weight: bold;
-    color: var(--neon);
-    font-size: 18px;
-    margin-right: 8px;
-  }
+  <!-- SweetAlert2 CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+  />
 
-  .counter-description {
-    font-size: 16px;
-    color: #b5ffaa;
-  }
-  
-  /* Progress bar */
-  .progress-message-container {
-    text-align: left;
-    margin-bottom: 2px; /* Adjusted margin */
-  }
+  <!-- intl-tel-input CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css"
+  />
 
-  .progress-message {
-    color: var(--neon);
-    font-weight: bold;
-    font-size: 14px;
-    text-shadow: 0 0 5px var(--neon);
-  }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f3f5ff, #ffffff);
+      color: #222;
+    }
 
-  .progress-container {
-    width: 100%;
-    height: 16px;
-    background: #111;
-    border-radius: 8px;
-    margin-bottom: 5px; /* Adjusted margin */
-    position: relative;
-    border: 1px solid rgba(57, 255, 20, 0.5);
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    width: 0;
-    background: var(--neon);
-    border-radius: 8px;
-    transition: width 0.5s ease-in-out;
-    box-shadow: 0 0 8px var(--neon), 0 0 12px var(--neon);
-    position: relative;
-  }
+    .container {
+      max-width: 500px;
+      margin: 6% auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 2px 40px 40px 40px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: 0.3s ease;
+    }
 
-  input {
-    width: 90%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid var(--neon);
-    background: #111;
-    color: var(--text);
-    transition: all 0.3s ease;
-  }
-  input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-  }
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    border-radius: 8px;
-    border: none;
-    background: var(--neon);
-    color: var(--dark);
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-  }
-  button:hover { background: var(--accent); transform: translateY(-2px); }
-  .msg { margin-top: 14px; font-size: 14px; min-height: 18px; }
-  
-  /* Flexbox for equal width buttons */
-  .social-buttons {
-    display: flex;
-    gap: 5px;
-    margin-top: 7px; /* Adjusted margin */
-  }
+    .container:hover {
+      transform: translateY(-4px);
+    }
 
-  /* Updated .wtap class for top icon */
-  .wtap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: var(--accent);
-    font-weight: 600;
-    border: 1px solid var(--accent);
-    padding: 10px 14px;
-    border-radius: 8px;
-    transition: all 0.3s;
-    flex: 1;
-    max-width: 50%;
-    text-align: center;
-  }
+    h1 {
+      font-weight: 700;
+      color: #1e60d6;
+      margin-bottom: 10px;
+    }
 
-  /* Updated i element for spacing */
-  i {
-    margin-right: 0;
-    margin-bottom: 6px;
-  }
-  
-  .wtap:hover { background: var(--accent); color: var(--dark); }
-  
-  /* Bouncing keyframe animation for WhatsApp button */
-  .bounce {
-    animation: bounce 1.8s infinite;
-  }
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-  }
-  .neon-text {
-    animation: fad 1.5s infinite;
-    color: var(--neon);
-    text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
-    margin-top: 5px; /* Adjusted margin */
-  }
-  @keyframes fad {
-            0% { opacity: 0.2;}
-            50% { opacity: 0.6;}
-            100% { opacity: 1;}                        
-  }
-  .small { font-size: 12px; margin-top: 8px; /* Adjusted margin */ color: #aaffaa; }
- 
-</style>
+    h2 {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 5px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #555;
+      margin: 10px 0 25px;
+      line-height: 1.6;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    form label {
+      text-align: left;
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    form label i {
+      color: #1e60d6;
+      margin-right: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1.8px solid #d0d8f0;
+      outline: none;
+      font-size: 1rem;
+      background: #f9fbff;
+      transition: 0.3s;
+    }
+
+    #name {
+      width: 90%;
+    }
+
+    input:focus {
+      border-color: #1e60d6;
+      box-shadow: 0 0 8px rgba(30, 96, 214, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+      background: linear-gradient(to right, #6aa6ff, #1e60d6);
+      box-shadow: 0 4px 12px rgba(30, 96, 214, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #82b8ff, #184bb0);
+      transform: translateY(-1px);
+    }
+
+    .join-btn {
+      display: inline-block;
+      background: linear-gradient(to right, #5ff1a0, #128c7e);
+      color: white;
+      width: 87%;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: 0.3s;
+      box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+      margin-top: 20px;
+      animation: bounce 1.8s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .join-btn:hover {
+      background: linear-gradient(to right, #74f3ad, #0e7a6f);
+      transform: translateY(-1px);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    footer i {
+      color: #1e60d6;
+      margin-right: 5px;
+    }
+
+    .iti__country-list {
+      background: #fff !important;
+      color: #333 !important;
+      border-radius: 8px;
+    }
+
+    .swal2-popup {
+      border-radius: 15px !important;
+    }
+  </style>
 </head>
 <body>
-  <div id="particles-js"></div>
+  <div class="container">
+    <h1>Benfei VCF</h1>
+    <h2>Your Smart Way to Boost WhatsApp Connections</h2>
+    <p>
+      Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join our community.
+    </p>
 
-  <div class="card">
-    <h1><i class="fas fa-address-card"></i> Welcome to Benfei VCF</h1>
-    <p><i class="fas fa-upload"></i> Upload only your WhatsApp contact here. Must begin with "+" followed by country code and number</p>
-    
-    <div class="counter">
-      <span class="live-indicator"></span>
-      <span id="contactCount" class="counter-text">Loading...</span>
-      <span class="counter-description"> contacts in VCF</span>
-    </div>
-    
-    <div class="progress-message-container">
-      <span id="progress-message" class="progress-message">0% of target reached</span>
-    </div>
+    <form id="uploadForm">
+      <div>
+        <label for="name"><i class="fa-solid fa-user"></i>Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required />
+      </div>
 
-    <div class="progress-container">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
-    <p id="downloadMessage" class="neon-text">Target Completed☺️! VCF file will drop in the group @9pm WAT</p>
+      <div>
+        <label for="phone"><i class="fa-solid fa-phone"></i>Phone Number</label>
+        <input type="tel" id="phone" placeholder="WhatsApp number..." required />
+      </div>
 
-    <form id="frm" onsubmit="return false">
-      <input id="name" placeholder="Full Name" autocomplete="name">
-      <input id="phone" placeholder="WhatsApp Number (e.g. +234xxx...)" autocomplete="tel" required>
-      <button id="submitBtn"><i class="fas fa-upload"></i> Upload Contact</button>
-      <button onclick="location.href='https://chat.whatsapp.com/EUS23QnLom95W2jre8SHzS?mode=ems_copy_c'"><i class="fab fa-whatsapp" ></i> Join Whatsapp Group</button>
+      <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
     </form>
 
-    <div class="msg" id="msg"></div>
-    
-    <div class="social-buttons">
-      <a id="whatsapp" class="wtap bounce" target="_blank" href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B">
-        <i class="fab fa-whatsapp"></i> Follow Our WhatsApp Channel
-      </a>
-      <a id="youtube" class="wtap bounce" target="_blank" href="https://www.youtube.com/@benfeitech">
-        <i class="fab fa-youtube"></i> Subscribe To YouTube Channel 
-      </a>
-    </div>
-
-    <div class="small">Powered by Benfei Tech</div>
+    <a href="https://chat.whatsapp.com/xyz" target="_blank" class="join-btn">
+      <i class="fa-brands fa-whatsapp"></i> Follow Our Channel
+    </a>
   </div>
 
-<script>
-const msgEl = document.getElementById('msg');
-const btn = document.getElementById('submitBtn');
-const contactCountEl = document.getElementById('contactCount');
-const progressBarEl = document.getElementById('progressBar');
-const progressMessageEl = document.getElementById('progress-message'); // New element to target
-const downloadMessageEl = document.getElementById('downloadMessage');
-const whatsappGroupURL = 'https://chat.whatsapp.com/EUS23QnLom95W2jre8SHzS?mode=ems_copy_c';
-const targetCount = 1000;
+  <footer>
+    <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
+  </footer>
 
-// Function to update the contact counter and progress bar
-async function updateContactCounter() {
-  try {
-    const response = await fetch('/api/count');
-    const data = await response.json();
-    
-    if (data.count !== undefined) {
-      const currentCount = data.count;
-      contactCountEl.textContent = currentCount.toLocaleString();
-      
-      // Update progress bar
-      let percentage = Math.min(100, (currentCount / targetCount) * 100);
-      progressBarEl.style.width = `${percentage}%`;
-      
-      // Update the new progress message element with the full text
-      progressMessageEl.textContent = `${Math.round(percentage)}% of contacts uploaded; target => ${targetCount} contacts.`;
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    } else {
-      contactCountEl.textContent = 'Error';
-      console.error('Unexpected response format:', data);
-    }
-  } catch (error) {
-    console.error('Failed to fetch contact count:', error);
-    contactCountEl.textContent = 'Error';
-  }
-}
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-// Initial counter update
-updateContactCounter();
+  <!-- intl-tel-input JS -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 
-// Update counter every 3 seconds
-setInterval(updateContactCounter, 3000);
+  <script>
+    const phoneInput = document.querySelector("#phone");
 
-function show(msg, color){
-  msgEl.innerHTML = msg;
-  msgEl.style.color = color || 'var(--neon)';
-}
-
-function normalizePhone(s){
-  let plus = s.startsWith('+') ? '+' : '';
-  return plus + s.replace(/\D/g,'');
-}
-
-document.getElementById('frm').addEventListener('submit', async () => {
-  btn.disabled = true;
-  show('Sending...');
-  const name = "💫 " + document.getElementById('name').value.trim() + " ✨";
-  const phone = normalizePhone(document.getElementById('phone').value.trim());
-  if (!phone) { 
-    show('Please enter phone number', 'var(--warn)'); 
-    btn.disabled=false; 
-    return; 
-  }
-  try {
-    const res = await fetch('/api/upload', {
-      method:'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ name, phone })
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: "auto",
+      separateDialCode: true,
+      preferredCountries: ["ng", "us", "gb"],
+      showSearchBox: true,
+      geoIpLookup: function (callback) {
+        fetch("https://ipapi.co/json/")
+          .then((res) => res.json())
+          .then((data) => callback(data.country_code ? data.country_code.toLowerCase() : "ng"))
+          .catch(() => callback("ng"));
+      },
+      utilsScript:
+        "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
     });
-    const data = await res.json();
-    if (data.exists) {
-      show('⚠️ Phone number already exists.', 'var(--warn)');
-    } else if (data.success) {
-      // Show success message
-      show('✅ Contact uploaded successfully! Join group above or be redirected in seconds', 'var(--neon)');
-      document.getElementById('name').value = '';
-      document.getElementById('phone').value = '';
-      
-      // Update the counter and progress bar after successful upload
-      updateContactCounter();
-      
-      // Set the 2-second timer for redirecting message
-      setTimeout(() => {
-        show('Redirecting to WhatsApp group...', 'var(--accent)');
-        
-        // Wait another 2 seconds, then redirect
-        setTimeout(() => {
-          window.location.href = whatsappGroupURL;
-        }, 2000); // 2 seconds delay
-        
-      }, 2000); // 2 seconds delay
-      
-    } else {
-      show(data.error || 'Unexpected error.', 'var(--warn)');
-    }
-  } catch (e) {
-    console.error(e);
-    show('Network error. Try again.', 'var(--warn)');
-  } finally {
-    btn.disabled = false;
-  }
-});
-</script>
 
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
-particlesJS("particles-js", {
-  particles: {
-    number: { value: 127, density: { enable: true, value_area: 800 } },
-    color: { value: ["#39ff14", "#14ffec"] }, // neon green + cyan
-    shape: { type: "circle" },
-    opacity: { value: 1, random: false }, // solid
-    size: { value: 4, random: true },
-    line_linked: {
-      enable: true,
-      distance: 150,
-      color: "#14ffec",
-      opacity: 0.9,
-      width: 2
-    },
-    move: {
-      enable: true,
-      speed: 2.5,
-      random: true,
-      out_mode: "out"
-    }
-  },
-  interactivity: {
-    detect_on: "canvas",
-    events: {
-      onhover: { enable: true, mode: "repulse" },
-      onclick: { enable: true, mode: "push" },
-      resize: true
-    },
-    modes: {
-      repulse: { distance: 120, duration: 0.4 },
-      push: { particles_nb: 5 }
-    }
-  },
-  retina_detect: true
-});
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-// extra CSS glow effect
-const style = document.createElement("style");
-style.innerHTML = `
-  #particles-js canvas {
-    filter: drop-shadow(0 0 6px #39ff14)
-            drop-shadow(0 0 12px #14ffec);
-  }
-`;
-document.head.appendChild(style);
-</script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TD8WYJG6EY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TD8WYJG6EY'); // replace with your ID
-</script>
+      const name = document.getElementById("name").value.trim();
+
+      if (!name) return toastr.warning("Please enter your name.");
+
+      if (!iti.isValidNumber()) {
+        toastr.error("Invalid phone number. Please check and try again.");
+        return;
+      }
+
+      const fullNumber = iti.getNumber();
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, phone: fullNumber }),
+        });
+
+        const result = await response.json();
+
+        if (result.exists) {
+          toastr.warning("This number already exists in our database!");
+        } else if (result.success) {
+          toastr.success("Contact uploaded successfully!");
+
+          Swal.fire({
+            title: "✅ Contact Uploaded",
+            html: `
+              <p><b>${name}</b><br>Phone saved: <b>${fullNumber}</b></p>
+              <p>Join our WhatsApp channel below:</p>
+              <a href="https://chat.whatsapp.com/xyz" target="_blank" class="join-btn">
+                <i class="fa-brands fa-whatsapp"></i> Join Channel
+              </a>
+            `,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+          });
+        } else {
+          toastr.error("Something went wrong. Please try again.");
+        }
+      } catch (err) {
+        console.error(err);
+        toastr.error("Network error. Please check your connection.");
+      }
+    });
+  </script>
 </body>
-        </html>
-        
+</html>
