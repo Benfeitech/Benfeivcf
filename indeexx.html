@@ -265,7 +265,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name, phone: fullNumber }),
+          body: JSON.stringify({ name, phone }),
         });
 
         const result = await response.json();
