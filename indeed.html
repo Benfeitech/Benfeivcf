@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benfei VCF — Upload Contacts</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Toastr CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+  <!-- intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Benfei VCF</h1>
+    <p>
+      Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join our community.
+    </p>
+
+    <div class="member-stats">
+      <p><i class="fa-solid fa-users"></i> Total Members: <span class="numb" id="memberCount"></span></p>
+      <p><i class="fa-solid fa-bullseye"></i> Target Members: <span class="numb">500</span></p>
+    </div>
+
+    <form id="uploadForm">
+      <div>
+        <label for="name"><i class="fa-solid fa-user"></i>Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required />
+      </div>
+
+      <div>
+        <label for="phone"><i class="fa-solid fa-phone"></i>Phone Number</label>
+        <input type="tel" id="phone" placeholder="WhatsApp number..." required />
+      </div>
+
+      <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
+    </form>
+
+    <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" class="join-btn">
+      <i class="fa-brands fa-whatsapp"></i> Follow Our Channel
+    </a>
+  </div>
+
+  <footer>
+    <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
+  </footer>
+
+  <!-- jQuery (required by Toastr) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- intl-tel-input JS -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+
+  <!-- Custom JS -->
+  <script src="script.js"></script>
+</body>
+</html>
