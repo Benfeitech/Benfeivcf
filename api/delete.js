@@ -1,34 +1,54 @@
-import { createClient } from "@supabase/supabase-js";
+// api/delete.js
+import { supabaseAdmin } from "../lib/supabaseServer.js";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-app.post("/api/delete", async (req, res) => {
-  const { phone, password } = req.body;
-
-  // ✅ Password check
-  if (password !== ADMIN_PASSWORD) 
-    return res.status(401).json({ message: "Unauthorized" });
+export default async function handler(req, res) {
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    // 🔥 Delete contact with matching phone
-    const { error, count } = await supabase
-      .from("contacts")
-      .delete()
-      .eq("phone", phone)
-      .select("id", { count: "exact" });
+    const { phone, id, password } = req.body ?? {};
 
-    if (error) throw error;
-
-    if (count === 0) {
-      return res.status(404).json({ message: "Contact not found" });
+    // Password check
+    if (!password || password !== process.env.ADMIN_PASSWORD) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
-    res.json({ message: `Contact with phone ${phone} deleted successfully` });
+    // Require either phone or id
+    if (!phone && !id) {
+      return res.status(400).json({ error: "Provide phone or id to delete" });
+    }
+
+    // Normalize phone (if provided)
+    const normalizedPhone = phone ? String(phone).trim() : null;
+
+    // Delete by id if provided, otherwise by phone
+    let query = supabaseAdmin.from("contacts").delete();
+
+    if (id) {
+      query = query.eq("id", id);
+    } else {
+      query = query.eq("phone", normalizedPhone);
+    }
+
+    // return deleted rows so we can see if anything was removed
+    const { data, error } = await query.select("id");
+
+    if (error) {
+      console.error("Supabase delete error:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: "Contact not found" });
+    }
+
+    return res.json({
+      message: "Contact deleted successfully",
+      deleted: data.length,
+      ids: data.map((r) => r.id),
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error deleting contact" });
+    return res.status(500).json({ error: "Failed to delete contact" });
   }
-});
+      }
