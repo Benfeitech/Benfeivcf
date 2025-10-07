@@ -6,34 +6,19 @@
   <title>Benfei VCF — Upload Contacts</title>
 
   <!-- Google Font -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Toastr CSS -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
   <!-- SweetAlert2 CSS -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 
   <!-- intl-tel-input CSS -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" />
 
   <style>
     body {
@@ -62,7 +47,7 @@
     h1 {
       font-weight: 700;
       color: #1e60d6;
-      margin-bottom: 10px;
+      margin-bottom: 2px;
     }
 
     h2 {
@@ -75,9 +60,28 @@
     p {
       font-size: 0.9rem;
       color: #555;
-      margin: 10px 0 25px;
       line-height: 1.6;
     }
+  .member-stats {
+    text-align: center; /* ensures it’s not centered */
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 20px;
+    color: #222;
+  }
+
+  .member-stats p {
+    margin: 4px 0;
+    font-size: 13px;
+  }
+
+  .member-stats i {
+    color: #007bff; /* blue icons */
+    margin-right: 3px;
+  }
+
+  .member-stats strong {
+    color: #111;
+  }
 
     form {
       display: flex;
@@ -89,7 +93,6 @@
       text-align: left;
       display: block;
       font-weight: 500;
-      margin-bottom: 5px;
       color: #333;
     }
 
@@ -190,11 +193,14 @@
 <body>
   <div class="container">
     <h1>Benfei VCF</h1>
-    <h2>Your Smart Way to Boost WhatsApp Connections</h2>
     <p>
       Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join our community.
     </p>
 
+ <div class="member-stats">
+  <p><i class="fa-solid fa-users"></i> Total Members: <strong id="membercount">343</strong> </p>
+  <p><i class="fa-solid fa-bullseye"></i> Target Members: <strong>500</strong></p>
+</div>
     <form id="uploadForm">
       <div>
         <label for="name"><i class="fa-solid fa-user"></i>Full Name</label>
@@ -209,7 +215,7 @@
       <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
     </form>
 
-    <a href="https://chat.whatsapp.com/xyz" target="_blank" class="join-btn">
+    <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" class="join-btn">
       <i class="fa-brands fa-whatsapp"></i> Follow Our Channel
     </a>
   </div>
@@ -218,12 +224,11 @@
     <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
   </footer>
 
+  <!-- jQuery (required by Toastr) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
- <!-- jQuery (required by Toastr) -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-<!-- Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
   <!-- SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -232,6 +237,7 @@
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 
   <script>
+    // Initialize phone input
     const phoneInput = document.querySelector("#phone");
 
     const iti = window.intlTelInput(phoneInput, {
@@ -239,36 +245,52 @@
       separateDialCode: true,
       preferredCountries: ["ng", "us", "gb"],
       showSearchBox: true,
-      geoIpLookup: function (callback) {
+      geoIpLookup: (callback) => {
         fetch("https://ipapi.co/json/")
           .then((res) => res.json())
           .then((data) => callback(data.country_code ? data.country_code.toLowerCase() : "ng"))
           .catch(() => callback("ng"));
       },
-      utilsScript:
-        "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
     });
 
+    // Fetch and update live member count
+    async function updateMemberCount() {
+      try {
+        const res = await fetch("/api/count");
+        const data = await res.json();
+        document.getElementById("memberCount").textContent = data.count || 0;
+      } catch (err) {
+        document.getElementById("memberCount").textContent = "N/A";
+        console.error("Error fetching counter:", err);
+      }
+    }
+
+    updateMemberCount();
+    setInterval(updateMemberCount, 10000); // refresh every 10 seconds
+
+    // Handle form submission
     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
+      const name = "💫 " + document.getElementById("name").value.trim() + " ✨";
 
       if (!name) return toastr.warning("Please enter your name.");
 
+      const countryData = iti.getSelectedCountryData();
+      const countryName = countryData?.name || "your country";
+
       if (!iti.isValidNumber()) {
-        toastr.error("Invalid phone number. Please check and try again.");
+        toastr.error(`Invalid phone number from ${countryName}`);
         return;
       }
 
       const fullNumber = iti.getNumber();
 
       try {
-        const response = await fetch('/api/upload', {
+        const response = await fetch("/api/upload", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, phone: fullNumber }),
         });
 
@@ -280,17 +302,21 @@
           toastr.success("Contact uploaded successfully!");
 
           Swal.fire({
-            title: "✅ Contact Uploaded",
+            icon: "success",
+            title: "Contact Uploaded!",
             html: `
-              <p><b>${name}</b><br>Phone saved: <b>${fullNumber}</b></p>
-              <p>Join our WhatsApp channel below:</p>
-              <a href="https://chat.whatsapp.com/xyz" target="_blank" class="join-btn">
+              <p><b>Name: ${name}</b><br>Phone Number: <b>${fullNumber}</b></p>
+              <p>🎉 Your contact has been successfully added!</p>
+              <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" 
+                class="join-btn" style="display:inline-block;margin-top:15px;text-decoration:none;">
                 <i class="fa-brands fa-whatsapp"></i> Join Channel
               </a>
             `,
-            showConfirmButton: false,
-            allowOutsideClick: false,
+            confirmButtonText: "Done",
+            confirmButtonColor: "#1e60d6",
           });
+
+          updateMemberCount(); // refresh counter
         } else {
           toastr.error("Something went wrong. Please try again.");
         }
@@ -301,4 +327,4 @@
     });
   </script>
 </body>
-</html>
+       </html>
