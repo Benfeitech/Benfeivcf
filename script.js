@@ -70,7 +70,6 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         icon: "success",
         title: "Contact Uploaded!",
         html: `
-          <p>Your contact has been successfully uploaded 🎉</p><br>
           <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p>
           <p>Join our WhatsApp Channel below 👇 for VCF</p>
           <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" 
