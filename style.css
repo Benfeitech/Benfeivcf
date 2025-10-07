@@ -163,11 +163,18 @@ footer i {
   border-radius: 8px;
 }
 
-.swal2-popup {
-  border-radius: 15px !important;
-}
-
 .numb {
   color: #1e60d6;
   font-weight: bold;
 }
+.swal2-popup {
+  padding: 1.5em 1em !important;
+}
+
+.swal2-title {
+  margin-bottom: 0.4em !important;
+}
+
+.swal2-html-container {
+  margin-top: 0.2em !important;
+    }
