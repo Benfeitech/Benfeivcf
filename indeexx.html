@@ -218,8 +218,12 @@
     <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
   </footer>
 
-  <!-- Toastr JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+ <!-- jQuery (required by Toastr) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
   <!-- SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -265,7 +269,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name, phone }),
+          body: JSON.stringify({ name, phone: fullNumber }),
         });
 
         const result = await response.json();
