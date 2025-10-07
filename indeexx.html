@@ -198,7 +198,7 @@
     </p>
 
  <div class="member-stats">
-  <p><i class="fa-solid fa-users"></i> Total Members: <strong id="membercount">343</strong> </p>
+  <p><i class="fa-solid fa-users"></i> Total Members: <strong id="memberCount">343</strong> </p>
   <p><i class="fa-solid fa-bullseye"></i> Target Members: <strong>500</strong></p>
 </div>
     <form id="uploadForm">
@@ -267,7 +267,7 @@
     }
 
     updateMemberCount();
-    setInterval(updateMemberCount, 10000); // refresh every 10 seconds
+    setInterval(updateMemberCount, 1000); // refresh every 10 seconds
 
     // Handle form submission
     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
