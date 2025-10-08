@@ -307,12 +307,10 @@
             html: `
               <p><b>Name: ${name}</b><br>Phone Number: <b>${fullNumber}</b></p>
               <h3>Redirecting to group</h3>
-              setTimeout(()=> {window.location.href = 'https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B' }, 3000);
-            `,
-            confirmButtonText: "Done",
-            confirmButtonColor: "#1e60d6",
+          `,
           });
-
+setTimeout(()=> {window.location.href = 'https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B' }, 3000);
+            
           updateMemberCount(); // refresh counter
         } else {
           toastr.error("Something went wrong. Please try again.");
