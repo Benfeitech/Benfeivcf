@@ -34,7 +34,7 @@ setInterval(updateMemberCount, 1000);
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = "💫 " + document.getElementById("name").value.trim() + " ✨";
+  const name = "🌀 " + document.getElementById("name").value.trim() + " ⚡";
 
   if (!name) return toastr.warning("Please enter your name.");
 
