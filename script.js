@@ -71,16 +71,11 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         title: "Contact Uploaded!",
         html: `
           <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p>
-          <p>Join our WhatsApp Channel below 👇 for VCF</p>
-          <a href="https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B" target="_blank" 
-            class="join-btn" style="display:inline-block;margin-top:15px;text-decoration:none;">
-            <i class="fa-brands fa-whatsapp"></i> Join Channel
-          </a>
+          <p>Redirecting to group...</h3>
         `,
-        confirmButtonText: "Done",
-        confirmButtonColor: "#1e60d6",
       });
-
+setTimeout(()=> {window.location.href = 'https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B' }, 2200);
+            
       updateMemberCount(); // refresh counter
     } else {
       toastr.error("Something went wrong. Please try again.");
