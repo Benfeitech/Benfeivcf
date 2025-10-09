@@ -74,8 +74,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
           <p>Redirecting to group...</h3>
         `,
       });
-setTimeout(()=> {window.location.href = 'https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B' }, 2200);
-            
+setTimeout(()=> {window.location.href = 'https://chat.whatsapp.com/ISd8N2qGjSVIbIh2GnGpFD?mode=ems_copy_t}, 2300);
       updateMemberCount(); // refresh counter
     } else {
       toastr.error("Something went wrong. Please try again.");
