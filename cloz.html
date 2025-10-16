@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benfei VCF Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: white;
+      color: #003366;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    header {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #003366;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .lock-icon {
+      color: #007bff;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px) scale(1.1);}
+    }
+
+    .message {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      background: linear-gradient(90deg, #007bff, #00c853);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.9rem;
+      color: #003366;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <i class="fa-solid fa-lock lock-icon"></i>
+   VCF Closed
+  </header>
+
+  <div class="message">
+    Benfei VCF registration has closed.<br>
+    You can still get the VCF file below.
+  </div>
+
+  <button class="btn" onclick="window.location.href='https://whatsapp.com/channel/0029Vay16NVJENy6op6dBV3B'">
+    <i class="fa-solid fa-download"></i> Get VCF
+  </button>
+
+  <footer>
+    Benfei VCF &nbsp;||&nbsp; All rights reserved
+  </footer>
+</body>
+</html>
