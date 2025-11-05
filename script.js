@@ -75,7 +75,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         `,
       });
 setTimeout(() => {
-  window.location.href = 'https://chat.whatsapp.com/ISd8N2qGjSVIbIh2GnGpFD?mode=ems_copy_t';
+  window.location.href = 'https://chat.whatsapp.com/DKAB6MQJB7NGhK5wwHqgLO?mode=wwt';
 }, 600);
       updateMemberCount(); // refresh counter
     } else {
