@@ -34,7 +34,7 @@ setInterval(updateMemberCount, 1000);
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = "🌀 " + document.getElementById("name").value.trim() + " ⚡";
+  const name = "🥭 " + document.getElementById("name").value.trim() + " 🌽";
 
   if (!name) return toastr.warning("Please enter your name.");
 
@@ -76,7 +76,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 setTimeout(() => {
   window.location.href = 'https://chat.whatsapp.com/ISd8N2qGjSVIbIh2GnGpFD?mode=ems_copy_t';
-}, 1300);
+}, 600);
       updateMemberCount(); // refresh counter
     } else {
       toastr.error("Something went wrong. Please try again.");
