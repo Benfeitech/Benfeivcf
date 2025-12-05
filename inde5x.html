@@ -308,32 +308,36 @@ footer i {
   }
 </style>
 <script>
-  const music = document.getElementById("bgMusic");
-  const toggleBtn = document.getElementById("toggleAudio");
+ const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("toggleAudio");
 
-  // Try autoplay immediately (desktop sometimes allows)
+// Try autoplay (desktop)
+music.play().catch(() => {});
+
+// Fully mobile-safe unlock
+const unlockAudio = () => {
   music.play().catch(() => {});
+  window.removeEventListener("pointerdown", unlockAudio);
+  window.removeEventListener("touchstart", unlockAudio);
+  window.removeEventListener("click", unlockAudio);
+};
 
-  // Unlock autoplay on first interaction (mobile-friendly fix)
-  const unlockAudio = () => {
-    music.play().catch(() => {});
-    document.removeEventListener("click", unlockAudio);
-    document.removeEventListener("touchstart", unlockAudio);
-  };
+// Catch EVERY possible mobile gesture
+window.addEventListener("pointerdown", unlockAudio, { once: true });
+window.addEventListener("touchstart", unlockAudio, { once: true });
+window.addEventListener("click", unlockAudio, { once: true });
 
-  document.addEventListener("click", unlockAudio, { once: true });
-  document.addEventListener("touchstart", unlockAudio, { once: true });
+// Play / Pause toggle
+toggleBtn.addEventListener("click", () => {
+  if (music.paused) {
+    music.play();
+    toggleBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+  } else {
+    music.pause();
+    toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+  }
+});
 
-  // Play / Pause toggle button
-  toggleBtn.addEventListener("click", () => {
-    if (music.paused) {
-      music.play();
-      toggleBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
-    } else {
-      music.pause();
-      toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
-    }
-  });
 </script>
 
 
@@ -439,6 +443,6 @@ footer i {
     }, { passive: true });
   })();
 </script>
-<script src="script.js"></script>
+
 </body>
 </html>
