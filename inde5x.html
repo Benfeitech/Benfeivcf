@@ -10,12 +10,217 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" /> 
   <link rel="stylesheet" href="style.css" />
+  <style>
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #f3f5ff, #ffffff);
+  color: #222;
+}
+/* transparent / frosted container — keeps text opaque while showing emoji behind */
+.container {
+  max-width: 500px;
+  margin: 6% auto;
+  /* semi-transparent white */
+  background: rgba(255, 255, 255, 0.45);
+  /* optional subtle frosted blur */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 2px 40px 40px 40px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: 0.3s ease;
+  position: relative; /* create stacking context so z-index works */
+  z-index: 1;         /* make sure it's above the emoji layer */
+}
+
+/* stronger contrast version (if text is hard to read) */
+.container--strong {
+  background: rgba(255,255,255,0.85);
+}
+
+/* if you want fully transparent background but keep content readable */
+.container--transparent {
+  background: transparent;
+  box-shadow: none;
+}
+
+
+.container:hover {
+  transform: translateY(-4px);
+}
+
+h1 {
+  font-weight: 700;
+  color: #1e60d6;
+  margin-bottom: 2px;
+}
+
+h2 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.member-stats {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.member-stats p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.member-stats i {
+  color: #007bff;
+  margin-right: 3px;
+}
+
+.member-stats strong {
+  color: #111;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+form label {
+  text-align: left;
+  display: block;
+  font-weight: 500;
+  color: #333;
+}
+
+form label i {
+  color: #1e60d6;
+  margin-right: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.8px solid #d0d8f0;
+  outline: none;
+  font-size: 1rem;
+  background: #f9fbff;
+  transition: 0.3s;
+}
+
+#name {
+  width: 90%;
+}
+
+input:focus {
+  border-color: #1e60d6;
+  box-shadow: 0 0 8px rgba(30, 96, 214, 0.3);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+  background: linear-gradient(to right, #6aa6ff, #1e60d6);
+  box-shadow: 0 4px 12px rgba(30, 96, 214, 0.4);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(to right, #82b8ff, #184bb0);
+  transform: translateY(-1px);
+}
+
+.join-btn {
+  display: inline-block;
+  background: linear-gradient(to right, #5ff1a0, #128c7e);
+  color: white;
+  width: 87%;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+  box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+  margin-top: 20px;
+  animation: bounce 1.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.join-btn:hover {
+  background: linear-gradient(to right, #74f3ad, #0e7a6f);
+  transform: translateY(-1px);
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+footer i {
+  color: #1e60d6;
+  margin-right: 5px;
+}
+
+.iti__country-list {
+  background: #fff !important;
+  color: #333 !important;
+  border-radius: 8px;
+}
+
+.numb {
+  color: #1e60d6;
+  font-weight: bold;
+}
+.swal2-popup {
+  padding: 1.5em 1em !important;
+}
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
 </head>
+</style>
 <body>
+ 
+
   <div class="container">
-    <h1>Benfei VCF</h1>
+    <h1>Benfei Xmas VCF</h1>
     <p>
-      Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join our community.
+      Boost your WhatsApp views with <strong>Benfei Xmas VCF</strong>. Upload your name and WhatsApp number, then join our community.
     </p>
 
     <div class="member-stats">
@@ -43,12 +248,197 @@
   </div>
 
   <footer>
-    <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
+    <p>Built and <i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
   </footer>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-  <script src="script.js"></script>
+
+  <!-- AUDIO PLAYER (BOTTOM RIGHT) -->
+<div id="audioPlayer">
+  <audio id="bgMusic" autoplay loop>
+    <source src="xmassvcf.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="toggleAudio"><i class="fa-solid fa-pause"></i></button>
+</div>
+
+<style>
+  #audioPlayer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  #toggleAudio {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #1e60d6, #6aa6ff);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    animation: glowPulse 2.5s infinite ease-in-out;
+  }
+
+  @keyframes glowPulse {
+    0% {
+      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
+    }
+    25% {
+      box-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff, 0 0 40px #00eaff;
+    }
+    50% {
+      box-shadow: 0 0 10px #00ff6a, 0 0 20px #00ff6a, 0 0 40px #00ff6a;
+    }
+    75% {
+      box-shadow: 0 0 10px #ffae00, 0 0 20px #ffae00, 0 0 40px #ffae00;
+    }
+    100% {
+      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
+    }
+  }
+
+  #toggleAudio:hover {
+    transform: scale(1.08);
+  }
+</style>
+<script>
+  const music = document.getElementById("bgMusic");
+  const toggleBtn = document.getElementById("toggleAudio");
+
+  // Try autoplay immediately (desktop sometimes allows)
+  music.play().catch(() => {});
+
+  // Unlock autoplay on first interaction (mobile-friendly fix)
+  const unlockAudio = () => {
+    music.play().catch(() => {});
+    document.removeEventListener("click", unlockAudio);
+    document.removeEventListener("touchstart", unlockAudio);
+  };
+
+  document.addEventListener("click", unlockAudio, { once: true });
+  document.addEventListener("touchstart", unlockAudio, { once: true });
+
+  // Play / Pause toggle button
+  toggleBtn.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      toggleBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+    } else {
+      music.pause();
+      toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+    }
+  });
+</script>
+
+
+<!-- EMOJI BACKGROUND (replace particles.js block with this) -->
+<style>
+  /* container sits behind everything */
+  .emoji-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* each emoji wrapper controls vertical fall */
+  .emoji {
+    position: absolute;
+    top: -10vh; /* start slightly above viewport */
+    will-change: transform, opacity;
+    display: block;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* inner span handles horizontal sway (so transforms don't conflict) */
+  .emoji .i {
+    display: inline-block;
+    animation-name: sway;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    transform-origin: center;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(-12vh); opacity: 0; }
+    5%   { opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 1; }
+  }
+
+  @keyframes sway {
+    0%   { transform: translateX(calc(-1 * var(--sway))); }
+    50%  { transform: translateX(calc(var(--sway))); }
+    100% { transform: translateX(calc(-1 * var(--sway))); }
+  }
+
+  /* optional: slightly blur and lower contrast so emojis don't steal focus */
+  .emoji .i { filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
+</style>
+
+<div class="emoji-bg" id="emojiBg" aria-hidden="true"></div>
+
+<script>
+  (function createEmojiBackground() {
+    const container = document.getElementById('emojiBg');
+
+    // Customize these:
+    const EMOJIS = ["🎄","✨","🎁","❄️","💚","🎅","🌟"];
+    const COUNT = 50; // number of emojis
+
+    for (let i = 0; i < COUNT; i++) {
+      const wrap = document.createElement('span');
+      wrap.className = 'emoji';
+
+      // random horizontal position
+      wrap.style.left = Math.random() * 100 + '%';
+
+      // random fall duration between 8s and 18s
+      const fallDuration = 8 + Math.random() * 10;
+      wrap.style.animationDuration = fallDuration + 's';
+
+      // negative delay so they appear scattered immediately
+      wrap.style.animationDelay = -(Math.random() * fallDuration) + 's';
+
+      // random opacity variation
+      wrap.style.opacity = 0.8 - Math.random() * 0.45;
+
+      // inner element for horizontal sway
+      const inner = document.createElement('span');
+      inner.className = 'i';
+      inner.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
+      // random font size
+      const size = 14 + Math.floor(Math.random() * 36); // 14px to 50px
+      inner.style.fontSize = size + 'px';
+
+      // sway amplitude (px) and sway duration
+      const sway = 8 + Math.floor(Math.random() * 36); // 8px..44px
+      inner.style.setProperty('--sway', sway + 'px');
+      inner.style.animationDuration = (2 + Math.random() * 4).toFixed(2) + 's';
+      // slightly offset sway so each emoji moves differently
+      inner.style.animationDelay = -(Math.random() * 4) + 's';
+      inner.style.opacity = 0.95;
+
+      wrap.appendChild(inner);
+      container.appendChild(wrap);
+    }
+
+    // Optional: regenerate on resize for better distribution
+    window.addEventListener('resize', () => {
+      // do nothing heavy — you could re-create items here if you like
+    }, { passive: true });
+  })();
+</script>
+
 </body>
 </html>
