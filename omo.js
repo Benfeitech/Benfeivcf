@@ -15,19 +15,35 @@ const iti = window.intlTelInput(phoneInput, {
   utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
 });
 
-// Function for Robotic Voice
 function playRoboticVoice(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  
-  // To make it sound "robotic", we lower the pitch and slow the rate
-  msg.pitch = 0.8; // Lower pitch = more robotic
-  msg.rate = 1.3;  // Slightly slower
-  msg.volume = 1;
+  const msg = new SpeechSynthesisUtterance(text);
+  
+  // Get all available voices on the user's device
+  const voices = window.speechSynthesis.getVoices();
 
-  window.speechSynthesis.speak(msg);
+  // 1. Try to find a female voice (English)
+  // We look for 'Google' voices as they often sound more robotic/clear
+  const femaleVoice = voices.find(voice => 
+    (voice.name.includes('Female') || voice.name.includes('Google UK English Female') || voice.name.includes('Zira')) 
+    && voice.lang.includes('en')
+  );
+
+  if (femaleVoice) {
+    msg.voice = femaleVoice;
+  }
+
+  // 2. Setting for "Female Robot" effect:
+  msg.pitch = 1.5;  // Higher pitch (1.5 - 2.0) makes it sound more like a female android
+  msg.rate = 0.9;   // Keep it slightly below 1.0 for that "calculated" robotic speed
+  msg.volume = 1;
+
+  window.speechSynthesis.speak(msg);
 }
 
+// CRITICAL: Some browsers (like Chrome) need this to load voices correctly
+window.speechSynthesis.onvoiceschanged = () => {
+  window.speechSynthesis.getVoices();
+};
 // Fetch and update live member count
 async function updateMemberCount() {
   try {
