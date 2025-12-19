@@ -128,9 +128,15 @@ input {
 
   transition: all 0.25s ease;
 }
+    /* 1. Make all inputs and buttons behave the same way */
+input, button, .join-btn {
+  box-sizing: border-box; /* IMPORTANT: Includes padding in the width */
+  width: 100% !important;   /* Force everything to fill the container */
+}
 
+/* 2. Remove the specific width for #name that was causing the mismatch */
 #name {
-  width: 95%;
+  width: 100%;
 }
 
 input::placeholder {
@@ -181,7 +187,7 @@ button:active {
 }
 
 .join-btn {
-  display: inline-block;
+  display: block;
   width: 92%;
   padding: 14px 20px;
   border-radius: 14px;
