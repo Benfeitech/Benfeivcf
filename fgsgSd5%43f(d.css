@@ -1,0 +1,256 @@
+ body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #f3f5ff, #ffffff);
+  color: #222;
+}
+/* transparent / frosted container — keeps text opaque while showing emoji behind */
+.container {
+  max-width: 500px;
+  margin: 6% auto;
+  /* semi-transparent white */
+  background: rgba(255, 255, 255, 0.45);
+  /* optional subtle frosted blur */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 2px 40px 40px 40px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: 0.3s ease;
+  position: relative; /* create stacking context so z-index works */
+  z-index: 1;         /* make sure it's above the emoji layer */
+}
+
+/* stronger contrast version (if text is hard to read) */
+.container--strong {
+  background: rgba(255,255,255,0.85);
+}
+
+/* if you want fully transparent background but keep content readable */
+.container--transparent {
+  background: transparent;
+  box-shadow: none;
+}
+
+
+.container:hover {
+  transform: translateY(-4px);
+}
+
+h1 {
+  font-weight: 700;
+  color: #1e60d6;
+  margin-bottom: 2px;
+}
+
+h2 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.member-stats {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.member-stats p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.member-stats i {
+  color: #007bff;
+  margin-right: 3px;
+}
+
+.member-stats strong {
+  color: #111;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+form label {
+  text-align: left;
+  display: block;
+  font-weight: 500;
+  color: #333;
+}
+
+form label i {
+  color: #1e60d6;
+  margin-right: 6px;
+}
+
+input {
+  width: 92%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: #fff;
+  color: #222;
+
+  /* inset effect */
+  box-shadow:
+    inset 3px 3px 6px #c8c8cf,
+    inset -3px -3px 6px #ffffff;
+
+  transition: all 0.25s ease;
+}
+    /* 1. Make all inputs and buttons behave the same way */
+input, button, .join-btn {
+  box-sizing: border-box; /* IMPORTANT: Includes padding in the width */
+  width: 100% !important;   /* Force everything to fill the container */
+}
+
+/* 2. Remove the specific width for #name that was causing the mismatch */
+#name {
+  width: 100%;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+input:focus {
+  box-shadow:
+    inset 1px 1px 2px #c8c8cf,
+    inset -1px -1px 2px #ffffff,
+    0 0 0 2px rgba(30, 96, 214, 0.15);
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+
+  background: #1e60d6;
+  color: #fff;
+
+  /* BLUE inset */
+  box-shadow:
+    inset 3px 3px 6px #164aa6,
+    inset -3px -3px 6px #2f7cff,
+    0 6px 12px rgba(30, 96, 214, 0.35);
+
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  box-shadow:
+    inset 2px 2px 4px #164aa6,
+    inset -2px -2px 4px #2f7cff,
+    0 8px 16px rgba(30, 96, 214, 0.45);
+}
+
+button:active {
+  box-shadow:
+    inset 4px 4px 8px #164aa6,
+    inset -4px -4px 8px #2f7cff;
+  transform: scale(0.97);
+}
+
+.join-btn {
+  display: block;
+  width: 92%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  background: #128c7e;
+
+  /* GREEN inset */
+  box-shadow:
+    inset 3px 3px 6px #0e6b60,
+    inset -3px -3px 6px #1bd4b5,
+    0 6px 12px rgba(18, 140, 126, 0.35);
+
+  transition: all 0.25s ease;
+  margin-top: 20px;
+}
+
+.join-btn:hover {
+  box-shadow:
+    inset 2px 2px 4px #0e6b60,
+    inset -2px -2px 4px #1bd4b5,
+    0 8px 16px rgba(18, 140, 126, 0.45);
+}
+
+.join-btn:active {
+  box-shadow:
+    inset 4px 4px 8px #0e6b60,
+    inset -4px -4px 8px #1bd4b5;
+  transform: scale(0.97);
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+footer i {
+  color: #1e60d6;
+  margin-right: 5px;
+}
+
+.iti__country-list {
+  background: #fff !important;
+  color: #333 !important;
+  border-radius: 8px;
+}
+.iti {
+  width: 100%;
+}
+
+/* Ensure the input inside the wrapper still obeys your styling */
+.iti input {
+  width: 100% !important;
+}
+
+/* Optional: Adjust vertical alignment if the flag looks off-center */
+.iti__flag-container {
+  padding: 2px;
+}
+
+.numb {
+  color: #1e60d6;
+  font-weight: bold;
+}
+.swal2-popup {
+  padding: 1.5em 1em !important;
+}
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  background: transparent;
+  pointer-events: none;
+}
