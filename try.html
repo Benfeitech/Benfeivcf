@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benfei VCF — Upload Contacts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" /> 
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #f3f5ff, #ffffff);
+  color: #222;
+}
+/* transparent / frosted container — keeps text opaque while showing emoji behind */
+.container {
+  max-width: 500px;
+  margin: 6% auto;
+  /* semi-transparent white */
+  background: rgba(255, 255, 255, 0.45);
+  /* optional subtle frosted blur */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 2px 40px 40px 40px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: 0.3s ease;
+  position: relative; /* create stacking context so z-index works */
+  z-index: 1;         /* make sure it's above the emoji layer */
+}
+
+/* stronger contrast version (if text is hard to read) */
+.container--strong {
+  background: rgba(255,255,255,0.85);
+}
+
+/* if you want fully transparent background but keep content readable */
+.container--transparent {
+  background: transparent;
+  box-shadow: none;
+}
+
+
+.container:hover {
+  transform: translateY(-4px);
+}
+
+h1 {
+  font-weight: 700;
+  color: #1e60d6;
+  margin-bottom: 2px;
+}
+
+h2 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.member-stats {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.member-stats p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.member-stats i {
+  color: #007bff;
+  margin-right: 3px;
+}
+
+.member-stats strong {
+  color: #111;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+form label {
+  text-align: left;
+  display: block;
+  font-weight: 500;
+  color: #333;
+}
+
+form label i {
+  color: #1e60d6;
+  margin-right: 6px;
+}
+
+input {
+  width: 92%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: #fff;
+  color: #222;
+
+  /* inset effect */
+  box-shadow:
+    inset 3px 3px 6px #c8c8cf,
+    inset -3px -3px 6px #ffffff;
+
+  transition: all 0.25s ease;
+}
+
+#name {
+  width: 100%;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+input:focus {
+  box-shadow:
+    inset 1px 1px 2px #c8c8cf,
+    inset -1px -1px 2px #ffffff,
+    0 0 0 2px rgba(30, 96, 214, 0.15);
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+
+  background: #1e60d6;
+  color: #fff;
+
+  /* BLUE inset */
+  box-shadow:
+    inset 3px 3px 6px #164aa6,
+    inset -3px -3px 6px #2f7cff,
+    0 6px 12px rgba(30, 96, 214, 0.35);
+
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  box-shadow:
+    inset 2px 2px 4px #164aa6,
+    inset -2px -2px 4px #2f7cff,
+    0 8px 16px rgba(30, 96, 214, 0.45);
+}
+
+button:active {
+  box-shadow:
+    inset 4px 4px 8px #164aa6,
+    inset -4px -4px 8px #2f7cff;
+  transform: scale(0.97);
+}
+
+.join-btn {
+  display: inline-block;
+  width: 92%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  background: #128c7e;
+
+  /* GREEN inset */
+  box-shadow:
+    inset 3px 3px 6px #0e6b60,
+    inset -3px -3px 6px #1bd4b5,
+    0 6px 12px rgba(18, 140, 126, 0.35);
+
+  transition: all 0.25s ease;
+  margin-top: 20px;
+}
+
+.join-btn:hover {
+  box-shadow:
+    inset 2px 2px 4px #0e6b60,
+    inset -2px -2px 4px #1bd4b5,
+    0 8px 16px rgba(18, 140, 126, 0.45);
+}
+
+.join-btn:active {
+  box-shadow:
+    inset 4px 4px 8px #0e6b60,
+    inset -4px -4px 8px #1bd4b5;
+  transform: scale(0.97);
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+footer i {
+  color: #1e60d6;
+  margin-right: 5px;
+}
+
+.iti__country-list {
+  background: #fff !important;
+  color: #333 !important;
+  border-radius: 8px;
+}
+.iti {
+  width: 100%;
+}
+
+/* Ensure the input inside the wrapper still obeys your styling */
+.iti input {
+  width: 100% !important;
+}
+
+/* Optional: Adjust vertical alignment if the flag looks off-center */
+.iti__flag-container {
+  padding: 2px;
+}
+
+.numb {
+  color: #1e60d6;
+  font-weight: bold;
+}
+.swal2-popup {
+  padding: 1.5em 1em !important;
+}
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+</head>
+</style>
+<body>
+ 
+
+  <div class="container">
+    <h1>Benfei Xmas VCF</h1>
+    <p>
+      Boost your WhatsApp views with <strong>Benfei Xmas VCF</strong>. Upload your name and WhatsApp number, then join our community.
+    </p>
+
+    <div class="member-stats">
+      <p><i class="fa-solid fa-users"></i> Current Contacts: <span class="numb" id="memberCount"></span></p>
+      <p><i class="fa-solid fa-bullseye"></i> Target Contacts: <span class="numb">800</span></p>
+    </div>
+
+    <form id="uploadForm">
+      <div>
+        <label for="name"><i class="fa-solid fa-user"></i>Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name..." required />
+      </div>
+
+      <div>
+        <label for="phone"><i class="fa-solid fa-phone"></i>Phone Number</label>
+        <input type="tel" id="phone" placeholder="WhatsApp number..." required />
+      </div>
+
+      <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
+    </form>
+
+    <a href="https://whatsapp.com/channel/0029Vb6Q0np6LwHd6cRZKE2b" target="_blank" class="join-btn">
+      <i class="fa-brands fa-whatsapp"></i> Follow Our Channel
+    </a>
+  </div>
+
+  <footer>
+    <p>Built and <i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+
+  <!-- AUDIO PLAYER (BOTTOM RIGHT) -->
+<div id="audioPlayer">
+  <audio id="bgMusic" autoplay loop>
+    <source src="xmassvcf.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="toggleAudio"><i class="fa-solid fa-pause"></i></button>
+</div>
+
+<style>
+  #audioPlayer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+ #toggleAudio {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #1e60d6, #6aa6ff);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  /* animation disabled by default */
+  animation: none;
+}
+
+/* animation ONLY when playing */
+#toggleAudio.playing {
+  animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+
+  @keyframes glowPulse {
+    0% {
+      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
+    }
+    25% {
+      box-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff, 0 0 40px #00eaff;
+    }
+    50% {
+      box-shadow: 0 0 10px #00ff6a, 0 0 20px #00ff6a, 0 0 40px #00ff6a;
+    }
+    75% {
+      box-shadow: 0 0 10px #ffae00, 0 0 20px #ffae00, 0 0 40px #ffae00;
+    }
+    100% {
+      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
+    }
+  }
+
+  #toggleAudio:hover {
+    transform: scale(1.08);
+  }
+</style>
+<script>
+ const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("toggleAudio");
+
+// Try autoplay (desktop)
+music.play().catch(() => {});
+music.addEventListener("play", () => {
+  toggleBtn.classList.add("playing");
+});
+
+music.addEventListener("pause", () => {
+  toggleBtn.classList.remove("playing");
+});
+
+
+// Fully mobile-safe unlock
+const unlockAudio = () => {
+  music.play().catch(() => {});
+  window.removeEventListener("pointerdown", unlockAudio);
+  window.removeEventListener("touchstart", unlockAudio);
+  window.removeEventListener("click", unlockAudio);
+};
+
+// Catch EVERY possible mobile gesture
+window.addEventListener("pointerdown", unlockAudio, { once: true });
+window.addEventListener("touchstart", unlockAudio, { once: true });
+window.addEventListener("click", unlockAudio, { once: true });
+
+toggleBtn.addEventListener("click", () => {
+  if (music.paused) {
+    music.play();
+    toggleBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+    toggleBtn.classList.add("playing"); // start animation
+  } else {
+    music.pause();
+    toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+    toggleBtn.classList.remove("playing"); // stop animation
+  }
+});
+
+</script>
+
+
+<!-- EMOJI BACKGROUND (replace particles.js block with this) -->
+<style>
+  /* container sits behind everything */
+  .emoji-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* each emoji wrapper controls vertical fall */
+  .emoji {
+    position: absolute;
+    top: -10vh; /* start slightly above viewport */
+    will-change: transform, opacity;
+    display: block;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* inner span handles horizontal sway (so transforms don't conflict) */
+  .emoji .i {
+    display: inline-block;
+    animation-name: sway;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    transform-origin: center;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(-12vh); opacity: 0; }
+    5%   { opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 1; }
+  }
+
+  @keyframes sway {
+    0%   { transform: translateX(calc(-1 * var(--sway))); }
+    50%  { transform: translateX(calc(var(--sway))); }
+    100% { transform: translateX(calc(-1 * var(--sway))); }
+  }
+
+  /* optional: slightly blur and lower contrast so emojis don't steal focus */
+  .emoji .i { filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
+</style>
+
+<div class="emoji-bg" id="emojiBg" aria-hidden="true"></div>
+
+<script>
+  (function createEmojiBackground() {
+    const container = document.getElementById('emojiBg');
+
+    // Customize these:
+    const EMOJIS = ["🎄","✨","🎁","❄️","💚","🎅","🌟"];
+    const COUNT = 50; // number of emojis
+
+    for (let i = 0; i < COUNT; i++) {
+      const wrap = document.createElement('span');
+      wrap.className = 'emoji';
+
+      // random horizontal position
+      wrap.style.left = Math.random() * 100 + '%';
+
+      // random fall duration between 8s and 18s
+      const fallDuration = 8 + Math.random() * 10;
+      wrap.style.animationDuration = fallDuration + 's';
+
+      // negative delay so they appear scattered immediately
+      wrap.style.animationDelay = -(Math.random() * fallDuration) + 's';
+
+      // random opacity variation
+      wrap.style.opacity = 0.8 - Math.random() * 0.45;
+
+      // inner element for horizontal sway
+      const inner = document.createElement('span');
+      inner.className = 'i';
+      inner.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
+      // random font size
+      const size = 14 + Math.floor(Math.random() * 36); // 14px to 50px
+      inner.style.fontSize = size + 'px';
+
+      // sway amplitude (px) and sway duration
+      const sway = 8 + Math.floor(Math.random() * 36); // 8px..44px
+      inner.style.setProperty('--sway', sway + 'px');
+      inner.style.animationDuration = (2 + Math.random() * 4).toFixed(2) + 's';
+      // slightly offset sway so each emoji moves differently
+      inner.style.animationDelay = -(Math.random() * 4) + 's';
+      inner.style.opacity = 0.95;
+
+      wrap.appendChild(inner);
+      container.appendChild(wrap);
+    }
+
+    // Optional: regenerate on resize for better distribution
+    window.addEventListener('resize', () => {
+      // do nothing heavy — you could re-create items here if you like
+    }, { passive: true });
+  })();
+</script>
+<script>// Initialize phone input
+const phoneInput = document.querySelector("#phone");
+
+const iti = window.intlTelInput(phoneInput, {
+  initialCountry: "auto",
+  separateDialCode: true,
+  preferredCountries: ["ng", "us", "gb"],
+  showSearchBox: true,
+  geoIpLookup: (callback) => {
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => callback(data.country_code ? data.country_code.toLowerCase() : "ng"))
+      .catch(() => callback("ng"));
+  },
+  utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+});
+
+// Function for Robotic Voice
+function playRoboticVoice(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  
+  // To make it sound "robotic", we lower the pitch and slow the rate
+  msg.pitch = 0.5; // Lower pitch = more robotic
+  msg.rate = 0.9;  // Slightly slower
+  msg.volume = 1;
+
+  window.speechSynthesis.speak(msg);
+}
+
+// Fetch and update live member count
+async function updateMemberCount() {
+  try {
+    const res = await fetch("/api/count");
+    const data = await res.json();
+    document.getElementById("memberCount").textContent = data.count || 0;
+  } catch (err) {
+    document.getElementById("memberCount").textContent = "N/A";
+    console.error("Error fetching counter:", err);
+  }
+}
+
+updateMemberCount();
+setInterval(updateMemberCount, 1000);
+
+// Handle form submission
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = "🥭 " + document.getElementById("name").value.trim() + " 🌽";
+  if (!name) return toastr.warning("Please enter your name.");
+
+  const countryData = iti.getSelectedCountryData();
+  const countryName = countryData?.name || "your country";
+
+  if (!iti.isValidNumber()) {
+    toastr.error(`Invalid phone number from ${countryName}`);
+    return;
+  }
+
+  const fullNumber = iti.getNumber();
+
+  try {
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone: fullNumber }),
+    });
+
+    const result = await response.json();
+
+    if (result.exists) {
+      toastr.warning("This number already exists in our database!");
+    } else if (result.success) {
+      
+      // 1. Trigger Confetti
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#1e60d6', '#ffffff', '#ff0000'] // Custom Xmas/Brand colors
+      });
+
+      // 2. Play Robotic Voice
+      playRoboticVoice("Contact uploaded successfully, join the channel now");
+
+      // 3. Show Success Message
+      toastr.success("Contact uploaded successfully!");
+
+      document.getElementById("uploadForm").reset();
+      iti.setNumber(""); 
+
+      Swal.fire({
+        icon: "success",
+        title: "Contact Uploaded!",
+        html: `
+          <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p><br>
+          <p>Redirecting to group...</p>
+        `,
+        timer: 3000, // Give them time to hear the voice
+        timerProgressBar: true
+      });
+
+      setTimeout(() => {
+        window.location.href = 'https://chat.whatsapp.com/HYzBR40DCDE8X1GYvlOM88?mode=wwt';
+      }, 3500); 
+
+      updateMemberCount();
+    } else {
+      toastr.error("Something went wrong. Please try again.");
+    }
+  } catch (err) {
+    console.error(err);
+    toastr.error("Network error. Please check your connection.");
+  }
+});</script>
+
+</body>
+</html>
