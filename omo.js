@@ -24,7 +24,7 @@ function playRoboticVoice(text) {
   // 1. Try to find a female voice (English)
   // We look for 'Google' voices as they often sound more robotic/clear
   const femaleVoice = voices.find(voice => 
-    (voice.name.includes('Female') || voice.name.includes('Google UK English Female') || voice.name.includes('Zira')) 
+    (voice.name.includes('Female') || voice.name.includes('Google UK English Female')) 
     && voice.lang.includes('en')
   );
 
