@@ -34,7 +34,7 @@ function playRoboticVoice(text) {
 
   // 2. Setting for "Female Robot" effect:
   msg.pitch = 0.8;  // Higher pitch (1.5 - 2.0) makes it sound more like a female android
-  msg.rate = 1.3;   // Keep it slightly below 1.0 for that "calculated" robotic speed
+  msg.rate = 1.1;   // Keep it slightly below 1.0 for that "calculated" robotic speed
   msg.volume = 1;
 
   window.speechSynthesis.speak(msg);
@@ -63,7 +63,7 @@ setInterval(updateMemberCount, 1000);
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = "🥭 " + document.getElementById("name").value.trim() + " 🌽";
+  const name = "🎅 " + document.getElementById("name").value.trim() + " 🎄";
   if (!name) return toastr.warning("Please enter your name.");
 
   const countryData = iti.getSelectedCountryData();
@@ -114,13 +114,13 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
           <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p><br>
           <p>Redirecting to group...</p>
         `,
-        timer: 3000, // Give them time to hear the voice
+        timer: 4500, // Give them time to hear the voice
         timerProgressBar: true
       });
 
       setTimeout(() => {
         window.location.href = '';
-      }, 3500); 
+      }, 4500); 
 
       updateMemberCount();
     } else {
