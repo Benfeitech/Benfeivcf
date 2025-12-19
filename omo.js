@@ -33,7 +33,7 @@ function playRoboticVoice(text) {
   }
 
   // 2. Setting for "Female Robot" effect:
-  msg.pitch = 1.5;  // Higher pitch (1.5 - 2.0) makes it sound more like a female android
+  msg.pitch = 0.8;  // Higher pitch (1.5 - 2.0) makes it sound more like a female android
   msg.rate = 1.3;   // Keep it slightly below 1.0 for that "calculated" robotic speed
   msg.volume = 1;
 
