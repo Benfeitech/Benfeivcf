@@ -21,8 +21,8 @@ function playRoboticVoice(text) {
   const voices = window.speechSynthesis.getVoices();
   
   // To make it sound "robotic", we lower the pitch and slow the rate
-  msg.pitch = 0.5; // Lower pitch = more robotic
-  msg.rate = 0.9;  // Slightly slower
+  msg.pitch = 0.8; // Lower pitch = more robotic
+  msg.rate = 1.3;  // Slightly slower
   msg.volume = 1;
 
   window.speechSynthesis.speak(msg);
@@ -102,8 +102,8 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 
       setTimeout(() => {
-        window.location.href = 'https://chat.whatsapp.com/HYzBR40DCDE8X1GYvlOM88?mode=wwt';
-      }, 3500); 
+        window.location.href = '';
+      }, 33500); 
 
       updateMemberCount();
     } else {
