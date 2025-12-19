@@ -47,7 +47,7 @@ setInterval(updateMemberCount, 1000);
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = "🥭 " + document.getElementById("name").value.trim() + " 🌽";
+  const name = "🎅 " + document.getElementById("name").value.trim() + " 🎄";
   if (!name) return toastr.warning("Please enter your name.");
 
   const countryData = iti.getSelectedCountryData();
@@ -78,7 +78,8 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#1e60d6', '#ffffff', '#ff0000'] // Custom Xmas/Brand colors
+        colors: ['#1e60d6', '#ffffff', '#ff0000'], // Custom Xmas/Brand colors
+        zIndex: 9999
       });
 
       // 2. Play Robotic Voice
