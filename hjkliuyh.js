@@ -114,13 +114,13 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
           <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p><br>
           <p>Redirecting to group...</p>
         `,
-        timer: 100, // Give them time to hear the voice
+        timer: 50, // Give them time to hear the voice
         timerProgressBar: true
       });
 
       setTimeout(() => {
         window.location.href = 'https://chat.whatsapp.com/BXwVJl8oZD6G90gfJyLTBP';
-      }, 1500); 
+      }, 2500); 
 
       updateMemberCount();
     } else {
