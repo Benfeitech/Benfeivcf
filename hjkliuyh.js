@@ -99,7 +99,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 
       // 2. Play Robotic Voice
-      playRoboticVoice("Contact uploaded successfully, merry christmas and happy new year!");
+      playRoboticVoice("Contact uploaded successfully, merry christmas and happy new year.");
 
       // 3. Show Success Message
       toastr.success("Contact uploaded successfully!");
