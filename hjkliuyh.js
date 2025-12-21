@@ -99,7 +99,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 
       // 2. Play Robotic Voice
-      playRoboticVoice("Contact uploaded successfully, join the channel now");
+      playRoboticVoice("Contact uploaded successfully, merry christmas and happy new year!");
 
       // 3. Show Success Message
       toastr.success("Contact uploaded successfully!");
@@ -114,13 +114,13 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
           <p><b>Name: ${name}</b><br><b>Phone Number:</b> <b>${fullNumber}</b></p><br>
           <p>Redirecting to group...</p>
         `,
-        timer: 4500, // Give them time to hear the voice
+        timer: 100, // Give them time to hear the voice
         timerProgressBar: true
       });
 
       setTimeout(() => {
-        window.location.href = '';
-      }, 4500); 
+        window.location.href = 'https://chat.whatsapp.com/BXwVJl8oZD6G90gfJyLTBP';
+      }, 1500); 
 
       updateMemberCount();
     } else {
