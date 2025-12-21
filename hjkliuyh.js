@@ -34,7 +34,7 @@ function playRoboticVoice(text) {
 
   // 2. Setting for "Female Robot" effect:
   msg.pitch = 0.8;  // Higher pitch (1.5 - 2.0) makes it sound more like a female android
-  msg.rate = 1.1;   // Keep it slightly below 1.0 for that "calculated" robotic speed
+  msg.rate = 1.2;   // Keep it slightly below 1.0 for that "calculated" robotic speed
   msg.volume = 1;
 
   window.speechSynthesis.speak(msg);
@@ -99,7 +99,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 
       // 2. Play Robotic Voice
-      playRoboticVoice("Contact uploaded successfully, merry christmas and happy new year.");
+      playRoboticVoice("Contact uploaded successfully, merry christmas and happy new year!");
 
       // 3. Show Success Message
       toastr.success("Contact uploaded successfully!");
