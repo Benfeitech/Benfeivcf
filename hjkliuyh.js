@@ -120,7 +120,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
 
       setTimeout(() => {
         window.location.href = 'https://chat.whatsapp.com/BXwVJl8oZD6G90gfJyLTBP';
-      }, 3500); 
+      }, 3000); 
 
       updateMemberCount();
     } else {
