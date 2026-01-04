@@ -5,146 +5,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Income System | Link Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  
   <style>
-    body { font-family: "Poppins", sans-serif; background-color: #f8f9fa; }
+    body { font-family: "Poppins", sans-serif; background-color: #f8f9fa; margin: 0; }
     
-    /* GENERATOR UI - Only visible to the person creating the link */
+    /* GENERATOR UI - Only shown to the creator */
     #generator-ui {
-      background: #212529;
+      background: #1a1a1a;
       color: white;
-      padding: 30px 10px;
-      border-bottom: 5px solid #ff0049;
+      padding: 40px 20px;
+      border-bottom: 4px solid #ff0049;
     }
 
     #share-box {
-      display: none; /* Hidden until link is generated */
-      background: #343a40;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 15px;
+      display: none;
+      background: #2d2d2d;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border: 1px dashed #ff0049;
     }
 
-    /* THE LANDING PAGE STYLES */
+    /* THE LANDING PAGE CONTENT */
     .hero { background: #ff0049; color: white; text-align: center; padding: 100px 20px; }
     .btn-main, .omo { 
         background: #fff; color: #ff0049 !important; font-weight: 700; 
-        padding: 15px 30px; border-radius: 50px; text-decoration: none;
-        display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        transition: 0.3s; border: none;
+        padding: 15px 35px; border-radius: 50px; text-decoration: none;
+        display: inline-block; transition: 0.3s; border: none; cursor: pointer;
     }
-    .btn-main { background: #ff0049; color: white !important; }
-    .btn-main:hover, .omo:hover { transform: scale(1.05); }
+    .btn-main { background: #ff0049; color: white !important; border: 2px solid white; }
     section { padding: 60px 20px; text-align: center; }
     .blink { animation: blink 1s infinite; }
-    @keyframes blink { 50% { opacity: 0.5; } }
+    @keyframes blink { 50% { opacity: 0.6; } }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
   <div id="generator-ui">
     <div class="container text-center">
-      <h3>🛠️ Create Your Personalized Page</h3>
-      <p>Paste your Telegram or WhatsApp group link below to generate your unique sharing URL.</p>
+      <h2 style="color: #ff0049;">System Link Personalizer</h2>
+      <p>Enter your group link to get a clean, shortened URL for this website.</p>
       
       <div class="row justify-content-center">
         <div class="col-md-6">
-          <div class="input-group mb-3">
-            <input type="text" id="userGroupInput" class="form-control" placeholder="https://t.me/yourgroup">
-            <button class="btn btn-danger" onclick="generateURL()">Generate Link</button>
+          <div class="input-group">
+            <input type="text" id="userLink" class="form-control form-control-lg" placeholder="https://t.me/yourgroup">
+            <button class="btn btn-danger px-4" onclick="createShortLink()">Create My URL</button>
           </div>
 
           <div id="share-box">
-            <p class="mb-2 text-warning">✅ Done! Copy the link below to share with your audience:</p>
-            <input type="text" id="finalURL" class="form-control mb-2" readonly>
-            <button class="btn btn-outline-light btn-sm" onclick="copyURL()">Copy to Clipboard</button>
+            <p class="mb-2">✨ **Your Clean Link is Ready:**</p>
+            <input type="text" id="finalURL" class="form-control mb-3 text-center" readonly style="background: #eee; font-weight: bold;">
+            <button class="btn btn-light btn-sm w-100" onclick="copyLink()">Copy Personal Link</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <hr class="m-0">
+  <div id="landing-page">
+    <section class="hero">
+        <h1>Smart Income System</h1>
+        <p class="lead">Discover how smart Africans earn daily from home.</p>
+        <a href="#" class="omo mt-3 dynamic-btn">Join The Free Class</a>
+    </section>
 
-  <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
-    <div class="container justify-content-center">
-      <a class="navbar-brand fw-bold" href="#">SMART <span style="color:#ff0049">INCOME</span></a>
-    </div>
-  </nav>
+    <section>
+        <h2>Proven System</h2>
+        <p>This is for students, workers, and moms looking for extra income.</p>
+        <a href="#" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
+    </section>
 
-  <section class="hero">
-    <h1>Discover The Secret To Earning Daily Online</h1>
-    <p class="lead">Join the free class to see the exact method we use.</p>
-    <a href="https://t.me/DEFAULT_LINK" class="omo mt-3 dynamic-btn">Join The Free Class</a>
-  </section>
+    <section class="bg-light">
+        <h2>What You'll Get</h2>
+        <p>Access to my secret blueprint for 100k+ monthly.</p>
+        <a href="#" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
+    </section>
 
-  <section id="problem">
-    <h2>Tired of Scams?</h2>
-    <p>This is a proven beginner-friendly method that actually works.</p>
-    <a href="https://t.me/DEFAULT_LINK" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
-  </section>
+    <section>
+        <h2>Meet The Mentor</h2>
+        <p>I show you what works and what doesn't.</p>
+        <a href="#" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
+    </section>
 
-  <section id="learn" class="bg-light">
-    <h2>What You'll Learn</h2>
-    <p>Real-life stories and secret blueprints to help you earn 500k-1M monthly.</p>
-    <a href="https://t.me/DEFAULT_LINK" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
-  </section>
-
-  <section id="meet">
-    <h2>Meet Your Mentor</h2>
-    <p>I’ve helped hundreds of students start their online journey.</p>
-    <a href="https://t.me/DEFAULT_LINK" class="btn btn-main mt-3 dynamic-btn">Join The Free Class</a>
-  </section>
-
-  <section id="cta" class="bg-dark text-white">
-    <h2>Limited Spots Available</h2>
-    <a href="https://t.me/DEFAULT_LINK" class="omo blink mt-3 dynamic-btn" style="background:#ff0049; color:#fff !important;">🟢 Join The Free Class Now</a>
-  </section>
+    <section class="bg-dark text-white">
+        <h2>Ready to Start?</h2>
+        <a href="#" class="omo blink mt-3 dynamic-btn" style="background:#ff0049; color:white !important;">🟢 Join The Free Class</a>
+    </section>
+  </div>
 
   <script>
-    // 1. READ THE URL ON LOAD
-    // If the URL has ?group=XYZ, update all buttons automatically
+    // --- LOGIC TO READ AND DECODE THE URL ---
     window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const customLink = urlParams.get('group');
+        const params = new URLSearchParams(window.location.search);
+        const encodedId = params.get('id');
 
-        if (customLink) {
-            // Update all 5 buttons
-            const buttons = document.querySelectorAll('.dynamic-btn');
-            buttons.forEach(btn => {
-                btn.href = decodeURIComponent(customLink);
-            });
-            
-            // Hide the generator UI for the "visitor" so they only see the landing page
-            document.getElementById('generator-ui').style.display = 'none';
+        if (encodedId) {
+            try {
+                // Decode the Base64 string back to the original link
+                const decodedLink = atob(encodedId);
+                
+                // Apply the link to all 5 buttons
+                const buttons = document.querySelectorAll('.dynamic-btn');
+                buttons.forEach(btn => {
+                    btn.href = decodedLink;
+                });
+
+                // HIDE the generator for the visitor
+                document.getElementById('generator-ui').classList.add('hidden');
+            } catch (e) {
+                console.error("Invalid ID provided in URL.");
+            }
         }
     };
 
-    // 2. GENERATE THE NEW URL
-    function generateURL() {
-        const userInput = document.getElementById('userGroupInput').value;
-        if (!userInput.includes('http')) {
-            alert("Please enter a valid link (e.g., https://...)");
+    // --- LOGIC TO CREATE THE SHORT URL ---
+    function createShortLink() {
+        const input = document.getElementById('userLink').value.trim();
+        
+        if (!input.startsWith('http')) {
+            alert("Please enter a full link (including https://)");
             return;
         }
 
-        // Create the new URL using the current website address + the group parameter
+        // Convert the link to Base64 (Shortens and hides it)
+        const encodedId = btoa(input);
+        
+        // Get current page URL without existing parameters
         const baseUrl = window.location.href.split('?')[0];
-        const encodedLink = encodeURIComponent(userInput);
-        const finalGeneratedUrl = baseUrl + "?group=" + encodedLink;
+        const shortUrl = baseUrl + "?id=" + encodedId;
 
-        // Show the result
-        document.getElementById('finalURL').value = finalGeneratedUrl;
+        document.getElementById('finalURL').value = shortUrl;
         document.getElementById('share-box').style.display = 'block';
     }
 
-    // 3. COPY TO CLIPBOARD
-    function copyURL() {
+    function copyLink() {
         const copyText = document.getElementById('finalURL');
         copyText.select();
         document.execCommand("copy");
-        alert("Link copied! You can now share this URL with others.");
+        alert("Personalized link copied to clipboard!");
     }
   </script>
 
