@@ -10,21 +10,35 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" /> 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <link rel="stylesheet" href="fgsgSd5%43f(d.css" />
+  <link rel="stylesheet" href="vcff.css" />
  </head>
 <body>
- 
+
 
   <div class="container">
-    <h1>Benfei Xmas VCF</h1>
+    <h1>Benfei VCF</h1>
     <p>
-      Boost your WhatsApp views with <strong>Benfei Xmas VCF</strong>. Upload your name and WhatsApp number, then join the group.
+      Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join the group.
     </p>
 
-    <div class="member-stats">
-      <p><i class="fa-solid fa-users"></i> Current Contacts: <span class="numb" id="memberCount"></span></p>
-      <p><i class="fa-solid fa-bullseye"></i> Target Contacts: <span class="numb">800</span></p>
+           <div class="stats-container">
+      <div class="stat-item c-target">
+        <div class="stat-circle">1000</div>
+        <span class="stat-label">Target</span>
+      </div>
+
+      <div class="stat-item c-current">
+        <div class="stat-circle" id="displayCurrent">0</div>
+        <span class="stat-label">Current</span>
+      </div>
+
+      <div class="stat-item c-remaining">
+        <div class="stat-circle" id="displayRemaining">1000</div>
+        <span class="stat-label">Remaining</span>
+      </div>
     </div>
+
+
 
     <form id="uploadForm">
       <div>
@@ -53,108 +67,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 
-  <!-- AUDIO PLAYER (BOTTOM RIGHT) -->
-<div id="audioPlayer">
-  <audio id="bgMusic" autoplay loop>
-    <source src="xmassvcf.mp3" type="audio/mpeg">
-  </audio>
-
-  <button id="toggleAudio"><i class="fa-solid fa-pause"></i></button>
-</div>
-
-<style>
-  #audioPlayer {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9999;
-  }
-
- #toggleAudio {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #1e60d6, #6aa6ff);
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-
-  /* animation disabled by default */
-  animation: none;
-}
-
-/* animation ONLY when playing */
-#toggleAudio.playing {
-  animation: glowPulse 2.5s infinite ease-in-out;
-}
-
-
-  @keyframes glowPulse {
-    0% {
-      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
-    }
-    25% {
-      box-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff, 0 0 40px #00eaff;
-    }
-    50% {
-      box-shadow: 0 0 10px #00ff6a, 0 0 20px #00ff6a, 0 0 40px #00ff6a;
-    }
-    75% {
-      box-shadow: 0 0 10px #ffae00, 0 0 20px #ffae00, 0 0 40px #ffae00;
-    }
-    100% {
-      box-shadow: 0 0 10px #ff00c8, 0 0 20px #ff00c8, 0 0 40px #ff00c8;
-    }
-  }
-
-  #toggleAudio:hover {
-    transform: scale(1.08);
-  }
-</style>
-<script>
- const music = document.getElementById("bgMusic");
-const toggleBtn = document.getElementById("toggleAudio");
-
-// Try autoplay (desktop)
-music.play().catch(() => {});
-music.addEventListener("play", () => {
-  toggleBtn.classList.add("playing");
-});
-
-music.addEventListener("pause", () => {
-  toggleBtn.classList.remove("playing");
-});
-
-
-// Fully mobile-safe unlock
-const unlockAudio = () => {
-  music.play().catch(() => {});
-  window.removeEventListener("pointerdown", unlockAudio);
-  window.removeEventListener("touchstart", unlockAudio);
-  window.removeEventListener("click", unlockAudio);
-};
-
-// Catch EVERY possible mobile gesture
-window.addEventListener("pointerdown", unlockAudio, { once: true });
-window.addEventListener("touchstart", unlockAudio, { once: true });
-window.addEventListener("click", unlockAudio, { once: true });
-
-toggleBtn.addEventListener("click", () => {
-  if (music.paused) {
-    music.play();
-    toggleBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
-    toggleBtn.classList.add("playing"); // start animation
-  } else {
-    music.pause();
-    toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
-    toggleBtn.classList.remove("playing"); // stop animation
-  }
-});
-
-</script>
-
+ 
 
 <!-- EMOJI BACKGROUND (replace particles.js block with this) -->
 <style>
@@ -211,8 +124,8 @@ toggleBtn.addEventListener("click", () => {
     const container = document.getElementById('emojiBg');
 
     // Customize these:
-    const EMOJIS = ["🎄","✨","🎁","❄️","💚","🎅","🌟"];
-    const COUNT = 50; // number of emojis
+    const EMOJIS = ["😎","✌️","🥰","💖","💚"];
+    const COUNT = 20; // number of emojis
 
     for (let i = 0; i < COUNT; i++) {
       const wrap = document.createElement('span');
@@ -258,7 +171,7 @@ toggleBtn.addEventListener("click", () => {
     }, { passive: true });
   })();
 </script>
-<script src="hjkliuyh.js"></script>
+<script src="vcff.js"></script>
 
 </body>
 </html>
