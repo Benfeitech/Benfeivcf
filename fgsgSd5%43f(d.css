@@ -254,3 +254,92 @@ footer i {
   background: transparent;
   pointer-events: none;
 }
+
+/* Add this to vcff.css */
+
+.stats-container {
+  display: flex;
+  justify-content: center; /* Aligns them in the center horizontally */
+  gap: 20px; /* Space between the circles */
+  margin-bottom: 30px;
+  margin-top: 10px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+}
+
+/* --- CIRCLE STATS DESIGN --- */
+
+/* 1. Define the colors for each specific circle */
+.c-target {
+  --theme-color: #128c7e; /* WhatsApp Green */
+}
+
+.c-current {
+  --theme-color: #1e60d6; /* Benfei Blue */
+}
+
+.c-remaining {
+  --theme-color: #ff4500; /* Urgency Red */
+}
+
+/* 2. The Circle Base Design */
+.stat-circle {
+  width: 70px;
+  height: 70px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  
+  /* Apply the color variables here */
+  border: 2px solid var(--theme-color);
+  color: var(--theme-color);
+  
+  /* The Magic Glowing Animation using the variable */
+  box-shadow: 0 0 10px var(--theme-color);
+  animation: pulse-glow 2s infinite ease-in-out;
+  
+  transition: all 0.3s ease;
+}
+
+/* 3. Hover Effect: Fills the circle with the color */
+.stat-item:hover .stat-circle {
+  transform: scale(1.1);
+  background: var(--theme-color); /* Fills background with the specific color */
+  color: #fff; /* Makes text white */
+  box-shadow: 0 0 25px var(--theme-color); /* Stronger glow */
+}
+
+/* 4. The Single Animation (Works for all colors automatically) */
+@keyframes pulse-glow {
+  0% {
+    /* Soft glow */
+    box-shadow: 0 0 5px var(--theme-color);
+  }
+  50% {
+    /* Strong glow */
+    box-shadow: 0 0 18px var(--theme-color), 
+                inset 0 0 5px var(--theme-color);
+  }
+  100% {
+    /* Soft glow again */
+    box-shadow: 0 0 5px var(--theme-color);
+  }
+}
+
+.stat-label {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
