@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benfei VCF — Upload Contacts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" /> 
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="fgsgSd5%43f(d.css" />
+ </head>
+<body>
+
+
+  <div class="container">
+    <h1>Benfei VCF</h1>
+    <p>
+      Boost your WhatsApp views with <strong>Benfei VCF</strong>. Upload your name and WhatsApp number, then join the group.
+    </p>
+
+           <div class="stats-container">
+      <div class="stat-item c-target">
+        <div class="stat-circle">1000</div>
+        <span class="stat-label">Target</span>
+      </div>
+
+      <div class="stat-item c-current">
+        <div class="stat-circle" id="displayCurrent">0</div>
+        <span class="stat-label">Current</span>
+      </div>
+
+      <div class="stat-item c-remaining">
+        <div class="stat-circle" id="displayRemaining">1000</div>
+        <span class="stat-label">Remaining</span>
+      </div>
+    </div>
+
+
+
+    <form id="uploadForm">
+      <div>
+        <label for="name"><i class="fa-solid fa-user"></i>Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name..." required />
+      </div>
+
+      <div>
+        <label for="phone"><i class="fa-solid fa-phone"></i>Phone Number</label>
+        <input type="tel" id="phone" placeholder="WhatsApp number..." required />
+      </div>
+
+      <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Contact</button>
+    </form>
+
+    <a href="https://chat.whatsapp.com/HDIOhpLqcZV7tIvqoGK0BH?mode=gi_t" target="_blank" class="join-btn">
+      <i class="fa-brands fa-whatsapp"></i> Join the group
+    </a>
+
+ <footer>
+    <p><i class="fa-solid fa-bolt"></i> Powered by <strong>Benfei Tech</strong></p>
+  </footer>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+
+
+
+<!-- EMOJI BACKGROUND (replace particles.js block with this) -->
+<style>
+  /* container sits behind everything */
+  .emoji-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* each emoji wrapper controls vertical fall */
+  .emoji {
+    position: absolute;
+    top: -10vh; /* start slightly above viewport */
+    will-change: transform, opacity;
+    display: block;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* inner span handles horizontal sway (so transforms don't conflict) */
+  .emoji .i {
+    display: inline-block;
+    animation-name: sway;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    transform-origin: center;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(-12vh); opacity: 0; }
+    5%   { opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 1; }
+  }
+
+  @keyframes sway {
+    0%   { transform: translateX(calc(-1 * var(--sway))); }
+    50%  { transform: translateX(calc(var(--sway))); }
+    100% { transform: translateX(calc(-1 * var(--sway))); }
+  }
+
+  /* optional: slightly blur and lower contrast so emojis don't steal focus */
+  .emoji .i { filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
+</style>
+
+<div class="emoji-bg" id="emojiBg" aria-hidden="true"></div>
+
+<script>
+  (function createEmojiBackground() {
+    const container = document.getElementById('emojiBg');
+
+    // Customize these:
+    const EMOJIS = ["😎","✌️","🥰","💖","💚"];
+    const COUNT = 20; // number of emojis
+
+    for (let i = 0; i < COUNT; i++) {
+      const wrap = document.createElement('span');
+      wrap.className = 'emoji';
+
+      // random horizontal position
+      wrap.style.left = Math.random() * 100 + '%';
+
+      // random fall duration between 8s and 18s
+      const fallDuration = 8 + Math.random() * 10;
+      wrap.style.animationDuration = fallDuration + 's';
+
+      // negative delay so they appear scattered immediately
+      wrap.style.animationDelay = -(Math.random() * fallDuration) + 's';
+
+      // random opacity variation
+      wrap.style.opacity = 0.8 - Math.random() * 0.45;
+
+      // inner element for horizontal sway
+      const inner = document.createElement('span');
+      inner.className = 'i';
+      inner.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
+      // random font size
+      const size = 14 + Math.floor(Math.random() * 36); // 14px to 50px
+      inner.style.fontSize = size + 'px';
+
+      // sway amplitude (px) and sway duration
+      const sway = 8 + Math.floor(Math.random() * 36); // 8px..44px
+      inner.style.setProperty('--sway', sway + 'px');
+      inner.style.animationDuration = (2 + Math.random() * 4).toFixed(2) + 's';
+      // slightly offset sway so each emoji moves differently
+      inner.style.animationDelay = -(Math.random() * 4) + 's';
+      inner.style.opacity = 0.95;
+
+      wrap.appendChild(inner);
+      container.appendChild(wrap);
+    }
+
+    // Optional: regenerate on resize for better distribution
+    window.addEventListener('resize', () => {
+      // do nothing heavy — you could re-create items here if you like
+    }, { passive: true });
+  })();
+</script>
+<script src="vcff.js"></script>
+
+</body>
+</html>
