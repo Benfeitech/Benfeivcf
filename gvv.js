@@ -3,7 +3,7 @@
  * (Registration Closed Version)
  */
 
-const TARGET_NUMBER = 1000;
+const TARGET_NUMBER = 700;
 
 /**
  * Updates the UI with current member stats from the backend
