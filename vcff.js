@@ -134,7 +134,7 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       });
 
       setTimeout(() => {
-        window.location.href = 'https://chat.whatsapp.com/HDIOhpLqcZV7tIvqoGK0BH?mode=gi_t';
+        window.location.href = 'https://chat.whatsapp.com/CUKc40PZPsT0xTjbGWkJ20?mode=gi_t';
       }, 1000); 
 
       updateMemberCount();
