@@ -47,7 +47,7 @@ window.speechSynthesis.onvoiceschanged = () => {
 // Fetch and update live member count
 // REPLACE THE OLD updateMemberCount FUNCTION WITH THIS
 
-const TARGET_NUMBER = 700; // Change this number to match your target
+const TARGET_NUMBER = 600; // Change this number to match your target
 
 async function updateMemberCount() {
   try {
