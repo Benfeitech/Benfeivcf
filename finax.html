@@ -160,23 +160,29 @@ async function loadBanks(){
 try{
 
 const res = await fetch(`https://strowallet.com/api/banks/lists/?public_key=${PUBLIC_KEY}`);
-const data = await res.json();
+
+const result = await res.json();
 
 bankSelect.innerHTML="";
 
-data.data.forEach(bank=>{
+const banks = result.data.bank_list;
 
-const option=document.createElement("option");
-option.value=bank.code;
-option.textContent=bank.name;
+banks.forEach(bank => {
+
+const option = document.createElement("option");
+
+option.value = bank.bankCode;
+option.textContent = bank.bankName;
 
 bankSelect.appendChild(option);
 
 });
 
-}catch(err){
+}catch(error){
 
-bankSelect.innerHTML="<option>Error loading banks</option>";
+console.error(error);
+
+bankSelect.innerHTML="<option>Failed to load banks</option>";
 
 }
 
