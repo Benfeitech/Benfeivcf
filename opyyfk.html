@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editable Demo Receipt</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#16a34a;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    .stage, .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.05);
+    }
+
+    .stage{
+      padding:18px;
+      overflow:auto;
+    }
+
+    .panel{
+      padding:18px;
+    }
+
+    .panel h2{
+      margin:0 0 14px;
+      font-size:20px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .field.full{
+      grid-column:1 / -1;
+    }
+
+    .field label{
+      display:block;
+      font-size:13px;
+      margin:0 0 6px;
+      color:var(--muted);
+    }
+
+    .field input,
+    .field textarea{
+      width:100%;
+      padding:12px 14px;
+      border:1px solid #d1d5db;
+      border-radius:12px;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+      color:var(--text);
+    }
+
+    .field textarea{
+      min-height:84px;
+      resize:vertical;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    .btn-primary{background:#111827;color:#fff}
+    .btn-secondary{background:#e5e7eb;color:#111827}
+
+    /* Receipt preview */
+    .receipt{
+      width:min(100%, 900px);
+      aspect-ratio:1 / 1;
+      margin:0 auto;
+      background:#fff;
+      position:relative;
+      overflow:hidden;
+      border:1px solid #f1f1f1;
+    }
+
+    /* TOP perforated border */
+    .receipt::before{
+      content:"";
+      position:absolute;
+      top:-8px;
+      left:0;
+      width:100%;
+      height:16px;
+      background:
+        radial-gradient(circle, #000 5px, transparent 5.8px);
+      background-size:12px 12px;
+      background-repeat:repeat-x;
+      z-index:20;
+      pointer-events:none;
+    }
+
+    /* BOTTOM perforated border */
+    .receipt::after{
+      content:"";
+      position:absolute;
+      bottom:-12px;
+      left:0;
+      width:100%;
+      height:16px;
+      background:
+        radial-gradient(circle, #000 5px, transparent 5.8px);
+      background-size:12px 12px;
+      background-repeat:repeat-x;
+      z-index:20;
+      pointer-events:none;
+    }
+
+    /* watermark */
+    .receipt-inner::before{
+      content:"SAMPLE";
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size:92px;
+      font-weight:900;
+      letter-spacing:8px;
+      color:rgba(0,0,0,.045);
+      transform:rotate(-25deg);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .receipt-inner{
+      position:relative;
+      z-index:1;
+      width:100%;
+      height:100%;
+      padding:12px 12px 16px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      margin-bottom:10px;
+      min-height:60px;
+    }
+
+    #previewLogo{
+      display:block;
+      width:78px;   /* smaller logo width */
+      height:42px;  /* smaller logo height */
+      object-fit:contain;
+      border:none;
+      outline:none;
+      background:transparent;
+      flex-shrink:0;
+      align-self:flex-start;
+      margin-top:-18px;
+      margin-left:-35px;
+    }
+
+    .doc-title{
+      font-size:16px;
+      font-weight:400;
+      color:#2f2f2f;
+      text-align:right;
+      line-height:1.1;
+      padding-top:2px;
+      max-width:58%;
+      letter-spacing:.1px;
+    }
+
+    .center-head{
+      text-align:center;
+      margin:0 0 6px;
+    }
+
+    .amount{
+      color:#08B478;
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:.1px;
+      line-height:1.05;
+      margin:0;
+      word-break:break-word;
+    }
+
+    .status{
+      margin-top:3px;
+      font-size:16px;
+      font-weight:400;
+      color:#2f2f2f;
+      line-height:1.05;
+    }
+
+    .date{
+      margin-top:2px;
+      font-size:11px;
+      font-weight:400;
+      color:#8b8b8b;
+      line-height:1.05;
+    }
+
+    .divider{
+      height:1px;
+      background:#d9d9d9;
+      margin:10px 0 12px;
+      opacity:.9;
+    }
+
+    .details{
+      display:grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap:10px 16px;
+      align-items:start;
+      flex:1;
+      min-height:0;
+    }
+
+    .label{
+      font-size:13px;
+      color:#8e8e8e;
+      font-weight:400;
+      line-height:1.1;
+      align-self:center;
+    }
+
+    .name{
+      text-align:right;
+      font-size:15px;
+      font-weight:700;
+      color:#222;
+      line-height:1.1;
+      word-break:break-word;
+    }
+
+    .thin{
+      text-align:right;
+      font-size:12px;
+      font-weight:400;
+      color:#777;
+      margin-top:3px;
+      line-height:1.1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      word-break:normal;
+    }
+
+    .small-id{
+      text-align:right;
+      font-size:10px;
+      font-weight:400;
+      color:#666;
+      line-height:1.1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:clip;
+      letter-spacing:0;
+      word-break:normal;
+    }
+
+    .field-block{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+
+    .footer{
+      margin-top:auto;
+      padding-top:10px;
+      border-top:1px dashed #e5e7eb;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:#8b8b8b;
+      font-size:11px;
+      line-height:1.3;
+      font-weight:300;
+    }
+
+    .footer div{
+      max-width:90%;
+    }
+
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .receipt{width:100%; aspect-ratio:1 / 1}
+      .receipt-inner{padding:16px}
+      #previewLogo{width:170px;height:54px}
+      .doc-title{font-size:14px}
+      .amount{font-size:24px}
+      .status{font-size:15px}
+      .date{font-size:10px}
+      .label{font-size:12px}
+      .name{font-size:14px}
+      .thin{font-size:11px}
+      .small-id{font-size:9px}
+      .footer{font-size:10px}
+      .details{gap:8px 12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="stage">
+      <div id="receipt" class="receipt">
+        <div class="receipt-inner">
+          <div class="top">
+            <img id="previewLogo" alt="Logo" />
+            <div class="doc-title" id="previewDocTitle">Transaction Receipt</div>
+          </div>
+
+          <div class="center-head">
+            <div class="amount" id="previewAmount">₦2,000.00</div>
+            <div class="status" id="previewStatus">Successful</div>
+            <div class="date" id="previewDate">Mar 26th, 2026 19:22:20</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="details">
+            <div class="label">Receiver's Name</div>
+            <div class="field-block">
+              <div class="name" id="previewRecipientName">Benedict Idoko Abakpa</div>
+              <div class="thin" id="previewRecipientMeta">OPay | 906 071 5145</div>
+            </div>
+
+            <div class="label">Sender's Name</div>
+            <div class="field-block">
+              <div class="name" id="previewSenderName">Patrick Ochayi Gabriel</div>
+              <div class="thin" id="previewSenderMeta">Zenith Bank | 226****275</div>
+            </div>
+
+            <div class="label">Transaction Type</div>
+            <div class="small-id" id="previewTxType">Bank Deposit</div>
+
+            <div class="label">Transaction No.</div>
+            <div class="small-id" id="previewTxNo">—</div>
+
+            <div class="label">Session ID</div>
+            <div class="small-id" id="previewSessionId">—</div>
+          </div>
+
+          <div class="footer">
+            <div id="previewFooter">Enjoy a better demo layout with editable fields and export support by the NDIC.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Edit receipt details</h2>
+
+      <div class="grid">
+        <div class="field">
+          <label>Documentation title</label>
+          <input id="docTitle" type="text" value="Transaction Receipt" />
+        </div>
+
+        <div class="field">
+          <label>Amount</label>
+          <input id="amount" type="text" value="₦2,000.00" />
+        </div>
+
+        <div class="field">
+          <label>Status</label>
+          <input id="status" type="text" value="Successful" />
+        </div>
+
+        <div class="field">
+          <label>Date</label>
+          <input id="date" type="text" value="Mar 26th, 2026 19:22:20" />
+        </div>
+
+        <div class="field">
+          <label>Sender's name</label>
+          <input id="senderName" type="text" value="Patrick Ochayi Gabriel" />
+        </div>
+
+        <div class="field">
+          <label>Sender's details</label>
+          <input id="senderMeta" type="text" value="Zenith Bank | 226****275" />
+        </div>
+
+        <div class="field">
+          <label>Receiver's name</label>
+          <input id="recipientName" type="text" value="Benedict Idoko Abakpa" />
+        </div>
+
+        <div class="field">
+          <label>Receiver's details</label>
+          <input id="recipientMeta" type="text" value="OPay | 906 071 5145" />
+        </div>
+
+        <div class="field">
+          <label>Transaction type</label>
+          <input id="txType" type="text" value="Bank Deposit" />
+        </div>
+
+        <div class="field full">
+          <label>Footer</label>
+          <textarea id="footer">Enjoy a better demo layout with editable fields and export support by the NDIC.</textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="exportReceipt()">Export PNG</button>
+        <button class="btn-secondary" onclick="resetDemo()">Reset</button>
+        <button class="btn-secondary" onclick="generateTransactionIds()">Regenerate IDs</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LOGO_URL = "https://res.cloudinary.com/dqqyvozdw/image/upload/v1776677700/prfvpualmp6vkqwn2qjo.png";
+
+    function generateRandomDigits(length) {
+      let out = "";
+      for (let i = 0; i < length; i++) out += Math.floor(Math.random() * 10);
+      return out;
+    }
+
+    function generateTransactionIds() {
+      document.getElementById("previewTxNo").textContent = generateRandomDigits(24);
+      document.getElementById("previewSessionId").textContent = generateRandomDigits(30);
+    }
+
+    function bindLiveUpdates() {
+      const map = [
+        ["docTitle", "previewDocTitle"],
+        ["amount", "previewAmount"],
+        ["status", "previewStatus"],
+        ["date", "previewDate"],
+        ["recipientName", "previewRecipientName"],
+        ["recipientMeta", "previewRecipientMeta"],
+        ["senderName", "previewSenderName"],
+        ["senderMeta", "previewSenderMeta"],
+        ["txType", "previewTxType"],
+        ["footer", "previewFooter"]
+      ];
+
+      map.forEach(([inputId, previewId]) => {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
+
+        const update = () => {
+          preview.textContent = input.value || "";
+        };
+
+        input.addEventListener("input", update);
+        update();
+      });
+
+      const logo = document.getElementById("previewLogo");
+      if (logo) logo.src = LOGO_URL;
+    }
+
+    async function exportReceipt() {
+      const el = document.getElementById("receipt");
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+      });
+
+      const link = document.createElement("a");
+      link.download = "demo-receipt.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    function resetDemo() {
+      document.getElementById("docTitle").value = "Transaction Receipt";
+      document.getElementById("amount").value = "₦2,000.00";
+      document.getElementById("status").value = "Successful";
+      document.getElementById("date").value = "Mar 26th, 2026 19:22:20";
+      document.getElementById("recipientName").value = "Benedict Idoko Abakpa";
+      document.getElementById("recipientMeta").value = "OPay | 906 071 5145";
+      document.getElementById("senderName").value = "Patrick Ochayi Gabriel";
+      document.getElementById("senderMeta").value = "Zenith Bank | 226****275";
+      document.getElementById("txType").value = "Bank Deposit";
+      document.getElementById("footer").value = "Enjoy a better demo layout with editable fields and export support by the NDIC.";
+
+      bindLiveUpdates();
+      generateTransactionIds();
+    }
+
+    bindLiveUpdates();
+    generateTransactionIds();
+  </script>
+</body>
+</html>
