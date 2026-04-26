@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake Twitter Post Gen</title>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #0f1419;
+      --muted: #536471;
+      --line: #eff3f4;
+      --accent: #1d9bf0;
+      --accent-dark: #167cd0;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #f5f8ff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .section-card {
+      background: var(--panel);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 18px 18px 0;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+    }
+
+    .section-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* Preview area */
+    .preview-shell {
+      padding: 18px;
+    }
+
+    .preview-stage {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 460px;
+      background:
+        radial-gradient(circle at top left, rgba(29, 155, 240, 0.08), transparent 28%),
+        linear-gradient(180deg, #fafcff 0%, #f3f7fb 100%);
+      border: 1px solid #e5e7eb;
+      border-radius: 26px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tweet-card {
+      width: min(100%, 1140px);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+      border: 1px solid #edf1f5;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .tweet-card.theme-light {
+      background: #ffffff;
+      color: #0f1419;
+      border-color: #edf1f5;
+    }
+
+    .tweet-card.theme-dark {
+      background: #15202b;
+      color: #e7ecf0;
+      border-color: #273340;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .tweet-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 24px 12px;
+    }
+
+    .avatar {
+      width: 82px;
+      height: 82px;
+      border-radius: 999px;
+      object-fit: cover;
+      flex: 0 0 auto;
+      background: #e5e7eb;
+      border: 1px solid #dbe3ee;
+    }
+
+    .tweet-card.theme-dark .avatar {
+      border-color: #2f3b47;
+      background: #253341;
+    }
+
+    .head-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .name {
+      font-size: clamp(22px, 2.6vw, 32px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: inherit;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .verified {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .verified svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .handle {
+      margin-top: 4px;
+      font-size: clamp(15px, 2vw, 24px);
+      color: var(--muted);
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tweet-card.theme-dark .handle,
+    .tweet-card.theme-dark .meta,
+    .tweet-card.theme-dark .stat-label {
+      color: #8899a6;
+    }
+
+    .menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 10px;
+    }
+
+    .menu svg {
+      width: 26px;
+      height: 26px;
+      fill: #94a3b8;
+    }
+
+    .tweet-card.theme-dark .menu svg,
+    .tweet-card.theme-dark .icons svg {
+      fill: #8899a6;
+    }
+
+    .content {
+      padding: 14px 24px 16px;
+      font-size: clamp(28px, 3.4vw, 54px);
+      line-height: 1.14;
+      letter-spacing: -0.03em;
+      word-break: break-word;
+      font-weight: 400;
+      color: inherit;
+    }
+
+    .meta {
+      padding: 0 24px 18px;
+      font-size: clamp(15px, 1.6vw, 19px);
+      color: var(--muted);
+      font-weight: 400;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 0 24px;
+    }
+
+    .tweet-card.theme-dark .divider {
+      background: #273340;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 16px;
+      padding: 14px 24px 12px;
+      font-size: clamp(12px, 1.3vw, 16px);
+      align-items: center;
+      justify-content: flex-start;
+      font-weight: 400;
+      color: var(--muted);
+      overflow: hidden;
+    }
+
+    .stats > div {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .stats strong {
+      color: inherit;
+      font-weight: 700;
+      font-size: 1.2em;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-weight: 400;
+      font-size: 1.2em;
+      line-height: 1;
+    }
+
+    .icons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 14px 20px 16px;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+     /* LIGHT THEME → dark numbers */
+.theme-light .stats strong {
+  color: #0f1419;
+}
+
+/* DARK THEME → white numbers */
+.theme-dark .stats strong {
+  color: #ffffff;
+}
+
+    .tweet-card.theme-dark .icons {
+      border-top-color: #273340;
+    }
+
+    .icons .icon {
+      padding: 4px 0;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+    }
+
+    .icons svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--muted);
+    }
+
+    .download-row {
+      display: flex;
+      justify-content: center;
+      padding: 0 18px 18px;
+    }
+
+    /* Controls */
+    .controls-shell {
+      padding: 18px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .control-box {
+      background: rgba(255,255,255,0.86);
+      border: 1px solid #e5e7eb;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .control-box.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: #fff;
+      outline: none;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    input[type="text"]:hover, input[type="number"]:hover, textarea:hover, select:hover {
+      border-color: #cbd5e1;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .group {
+      margin-bottom: 14px;
+    }
+
+    .group:last-child {
+      margin-bottom: 0;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .toggle-row:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .toggle-row .txt {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .toggle-row .txt strong {
+      font-size: 14px;
+    }
+
+    .toggle-row .txt span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .switch input { display: none; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 999px;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+      transition: 0.2s ease;
+    }
+
+    .switch input:checked + .slider { background: var(--accent); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    .file-row {
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px 14px;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .file-row:hover {
+      border-color: #93c5fd;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+      transform: translateY(-1px);
+    }
+
+    .file-row input[type="file"] {
+      width: 100%;
+      font: inherit;
+    }
+
+    .file-name {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: inline-block;
+    }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease, filter 0.18s ease;
+      font-family: inherit;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.09);
+    }
+
+    button.primary {
+      color: #fff;
+      background: linear-gradient(135deg, #2ba5ff 0%, #1d9bf0 55%, #167be0 100%);
+      box-shadow: 0 10px 20px rgba(29, 155, 240, 0.22);
+      padding: 14px 22px;
+      border-radius: 16px;
+    }
+
+    button.primary:hover {
+      filter: brightness(1.03);
+      box-shadow: 0 16px 30px rgba(29, 155, 240, 0.26);
+    }
+
+    button.ghost {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      padding: 6px 18px 18px;
+    }
+
+    .footer {
+      text-align: center;
+      margin: 6px 18px 18px;
+      padding: 14px 10px;
+      font-size: 13px;
+      color: #64748b;
+      border-top: 1px solid #e5e7eb;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9));
+      border-radius: 0 0 20px 20px;
+    }
+
+    .footer strong {
+      font-weight: 700;
+      color: #1d9bf0;
+      letter-spacing: 0.3px;
+    }
+
+    .hidden { display: none !important; }
+
+    .layout-android .avatar { width: 82px; height: 82px; }
+    .layout-android .name { font-size: clamp(22px, 2.5vw, 30px); }
+    .layout-android .handle { font-size: clamp(15px, 1.8vw, 23px); }
+    .layout-android .content { font-size: clamp(28px, 3vw, 50px); }
+
+    .layout-iphone .avatar { width: 96px; height: 96px; }
+    .layout-iphone .name { font-size: clamp(24px, 2.7vw, 33px); }
+    .layout-iphone .handle { font-size: clamp(16px, 2vw, 25px); }
+    .layout-iphone .content { font-size: clamp(30px, 3.2vw, 54px); }
+
+    .layout-web .avatar { width: 88px; height: 88px; }
+    .layout-web .name { font-size: clamp(22px, 2.6vw, 31px); }
+    .layout-web .handle { font-size: clamp(15px, 1.9vw, 24px); }
+    .layout-web .content { font-size: clamp(28px, 3.1vw, 52px); }
+
+    @media (max-width: 1100px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+      .control-box.full {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 12px;
+      }
+
+      .preview-stage {
+        min-height: 360px;
+        padding: 14px;
+      }
+
+      .tweet-head {
+        gap: 12px;
+        padding: 14px 16px 8px;
+      }
+
+      .avatar {
+        width: 64px;
+        height: 64px;
+      }
+
+      .verified {
+        width: 20px;
+        height: 20px;
+      }
+
+      .content {
+        padding: 12px 16px 12px;
+      }
+
+      .meta {
+        padding: 0 16px 14px;
+      }
+
+      .divider {
+        margin: 0 16px;
+      }
+
+      .stats {
+        padding: 12px 16px 10px;
+        gap: 12px;
+      }
+
+      .icons {
+        padding: 12px 8px 14px;
+      }
+
+      .icons svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .download-row {
+        padding-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <section class="section-card">
+      <div class="section-header">
+        <h2>Preview</h2>
+  
+      </div>
+
+      <div class="preview-shell">
+        <div class="preview-stage">
+          <div id="postArea" class="tweet-card layout-android theme-light">
+            <div class="tweet-head">
+              <img
+                id="avatarPreview"
+                class="avatar"
+                alt="Profile preview"
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"
+              />
+
+              <div class="head-text">
+                <div class="name-row">
+                  <div id="namePreview" class="name">Benfei Tech</div>
+
+                  <div id="verifiedPreview" class="verified" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" aria-label="Verified account" role="img">
+                      <g>
+                        <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.746 1.867 3.49-.035.33-.053.664-.053 1.002 0 2.21 1.71 4 3.918 4 .51 0 1.002-.1 1.46-.282.54.912 1.523 1.518 2.613 1.518 1.09 0 2.073-.606 2.613-1.518.458.182.95.282 1.46.282 2.21 0 3.918-1.79 3.918-4 0-.338-.018-.672-.053-1.002 1.127-.744 1.867-2.03 1.867-3.49z" fill="#1D9BF0"></path>
+                        <path d="M16.145 9.005l-5.042 5.04-2.146-2.146c-.39-.39-1.024-.39-1.414 0-.39.39-.39 1.024 0 1.414l2.853 2.853c.195.196.45.294.707.294s.512-.098.707-.293l5.75-5.75c.39-.39.39-1.024 0-1.414-.39-.39-1.024-.39-1.415 0z" fill="#FFF"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+
+                <div id="handlePreview" class="handle">@benfei</div>
+              </div>
+
+              <div class="menu" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <g>
+                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <div id="contentPreview" class="content">Benfei Tech is the best</div>
+
+            <div class="meta">
+              <span id="timePreview">12:35pm</span>
+              <span>·</span>
+              <span id="datePreview">April 20, 2026</span>
+              <span>·</span>
+              <span id="sourcePreview">Twitter for Android</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="stats">
+              <div><strong id="retweetsPreview">563.4K</strong> <span class="stat-label">Retweets</span></div>
+              <div><strong id="quotesPreview">8.9M</strong> <span class="stat-label">Quote Tweets</span></div>
+              <div><strong id="likesPreview">8.7K</strong> <span class="stat-label">Likes</span></div>
+            </div>
+
+            <div class="icons">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <g>
+                    <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
+                  </g>
+                </svg>
+              </div>
+              <div class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <g>
+                    <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                  </g>
+                </svg>
+              </div>
+              <div class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <g>
+                    <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                  </g>
+                </svg>
+              </div>
+              <div class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <g>
+                    <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="download-row">
+        <button class="primary" id="downloadBtn" type="button">Download PNG</button>
+      </div>
+
+     
+      <div class="footer">
+        Powered by <strong>Benfei Tech</strong>
+      </div>
+    </section>
+
+     <section class="section-card">
+      <div class="section-header">
+        <h2>Customization</h2>
+        <p>Change the profile image, theme, and tweet details below.</p>
+      </div>
+
+      <div class="controls-shell">
+        <div class="controls-grid">
+          <div class="control-box">
+            <label for="profilePic">Upload profile picture</label>
+            <div class="file-row">
+              <input id="profilePic" type="file" accept="image/*" />
+            </div>
+            <div id="fileName" class="file-name">No file chosen</div>
+          </div>
+
+          <div class="control-box">
+            <label for="imageUrl">Image URL</label>
+            <input id="imageUrl" type="text" value="https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=400&q=80" />
+          </div>
+
+          <div class="control-box">
+            <div class="toggle-row">
+              <div class="txt">
+                <strong>Verified badge</strong>
+                <span>Show or hide the badge beside the name</span>
+              </div>
+              <label class="switch" aria-label="Verified badge toggle">
+                <input id="verifiedToggle" type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <label for="themeType">Twitter card theme</label>
+            <select id="themeType">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+
+          <div class="control-box">
+            <label for="displayName">Name</label>
+            <input id="displayName" type="text" value="Benfei Tech" />
+          </div>
+
+          <div class="control-box">
+            <label for="handle">Username</label>
+            <input id="handle" type="text" value="@benfei" />
+          </div>
+
+          <div class="control-box">
+            <label for="layoutType">Layout type</label>
+            <select id="layoutType">
+              <option value="android">Android</option>
+              <option value="iphone">iPhone</option>
+              <option value="web">Twitter for web</option>
+            </select>
+          </div>
+
+          <div class="control-box full">
+            <label for="postContent">Post content</label>
+            <textarea id="postContent">Benfei Tech is the best</textarea>
+          </div>
+
+          <div class="control-box">
+            <label for="timeText">Time</label>
+            <input id="timeText" type="text" value="12:35pm" />
+          </div>
+
+          <div class="control-box">
+            <label for="dateText">Date</label>
+            <input id="dateText" type="text" value="April 20, 2026" />
+          </div>
+
+          <div class="control-box full">
+            <label for="sourceText">Source label</label>
+            <input id="sourceText" type="text" value="Twitter for Android" />
+          </div>
+
+          <div class="control-box">
+            <label for="retweets">Retweets</label>
+            <input id="retweets" type="text" value="563.4K" />
+          </div>
+
+          <div class="control-box">
+            <label for="quotes">Quote Tweets</label>
+            <input id="quotes" type="text" value="8.9M" />
+          </div>
+
+          <div class="control-box full">
+            <label for="likes">Likes</label>
+            <input id="likes" type="text" value="8.7K" />
+          </div>
+
+          <div class="control-box full">
+            <div class="btns">
+              <button class="ghost" id="resetBtn" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const els = {
+      profilePic: document.getElementById('profilePic'),
+      fileName: document.getElementById('fileName'),
+      imageUrl: document.getElementById('imageUrl'),
+      displayName: document.getElementById('displayName'),
+      handle: document.getElementById('handle'),
+      verifiedToggle: document.getElementById('verifiedToggle'),
+      themeType: document.getElementById('themeType'),
+      layoutType: document.getElementById('layoutType'),
+      postContent: document.getElementById('postContent'),
+      timeText: document.getElementById('timeText'),
+      dateText: document.getElementById('dateText'),
+      sourceText: document.getElementById('sourceText'),
+      retweets: document.getElementById('retweets'),
+      quotes: document.getElementById('quotes'),
+      likes: document.getElementById('likes'),
+      avatarPreview: document.getElementById('avatarPreview'),
+      namePreview: document.getElementById('namePreview'),
+      handlePreview: document.getElementById('handlePreview'),
+      verifiedPreview: document.getElementById('verifiedPreview'),
+      contentPreview: document.getElementById('contentPreview'),
+      timePreview: document.getElementById('timePreview'),
+      datePreview: document.getElementById('datePreview'),
+      sourcePreview: document.getElementById('sourcePreview'),
+      retweetsPreview: document.getElementById('retweetsPreview'),
+      quotesPreview: document.getElementById('quotesPreview'),
+      likesPreview: document.getElementById('likesPreview'),
+      postArea: document.getElementById('postArea'),
+      resetBtn: document.getElementById('resetBtn'),
+      downloadBtn: document.getElementById('downloadBtn')
+    };
+
+    const defaultImageUrl = 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=400&q=80';
+    const fallbackImageUrl = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1d9bf0"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="400" rx="200" fill="url(#g)"/>
+        <circle cx="200" cy="150" r="78" fill="#f8fafc"/>
+        <path d="M80 340c20-62 74-98 120-98s100 36 120 98" fill="#f8fafc"/>
+        <circle cx="145" cy="140" r="10" fill="#1e293b" opacity=".18"/>
+        <circle cx="255" cy="140" r="10" fill="#1e293b" opacity=".18"/>
+      </svg>
+    `);
+
+    let avatarDataUrl = defaultImageUrl;
+
+    function normalizeHandle(value) {
+      const trimmed = String(value || '').trim();
+      if (!trimmed) return '@benfei';
+      return trimmed.startsWith('@') ? trimmed : `@${trimmed}`;
+    }
+
+    function setCardTheme(theme) {
+      els.postArea.classList.remove('theme-light', 'theme-dark');
+      els.postArea.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+    }
+
+    function applyLayout(value) {
+      els.postArea.classList.remove('layout-android', 'layout-iphone', 'layout-web');
+      els.postArea.classList.add(`layout-${value}`);
+
+      if (value === 'android') els.sourceText.value = 'Twitter for Android';
+      if (value === 'iphone') els.sourceText.value = 'Twitter for iPhone';
+      if (value === 'web') els.sourceText.value = 'Twitter for Web';
+
+      sync();
+    }
+
+    function loadImage(src) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => {
+        avatarDataUrl = src;
+        els.avatarPreview.src = src;
+      };
+      img.onerror = () => {
+        avatarDataUrl = fallbackImageUrl;
+        els.avatarPreview.src = fallbackImageUrl;
+      };
+      img.src = src;
+    }
+
+    function sync() {
+      els.namePreview.textContent = els.displayName.value.trim() || 'Untitled';
+      els.handlePreview.textContent = normalizeHandle(els.handle.value);
+      els.contentPreview.textContent = els.postContent.value.trim() || '';
+      els.timePreview.textContent = els.timeText.value.trim() || '';
+      els.datePreview.textContent = els.dateText.value.trim() || '';
+      els.sourcePreview.textContent = els.sourceText.value.trim() || '';
+      els.retweetsPreview.textContent = els.retweets.value.trim() || '';
+      els.quotesPreview.textContent = els.quotes.value.trim() || '';
+      els.likesPreview.textContent = els.likes.value.trim() || '';
+      els.verifiedPreview.classList.toggle('hidden', !els.verifiedToggle.checked);
+      setCardTheme(els.themeType.value);
+
+      if (!els.avatarPreview.src || els.avatarPreview.src === window.location.href) {
+        els.avatarPreview.src = avatarDataUrl || defaultImageUrl;
+      }
+    }
+
+    els.profilePic.addEventListener('change', () => {
+      const file = els.profilePic.files && els.profilePic.files[0];
+      if (!file) {
+        els.fileName.textContent = 'No file chosen';
+        return;
+      }
+
+      els.fileName.textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        avatarDataUrl = e.target.result;
+        els.avatarPreview.src = avatarDataUrl;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    els.imageUrl.addEventListener('input', () => {
+      const url = els.imageUrl.value.trim();
+      if (!url) {
+        avatarDataUrl = fallbackImageUrl;
+        els.avatarPreview.src = fallbackImageUrl;
+        return;
+      }
+      loadImage(url);
+    });
+
+    [
+      els.displayName,
+      els.handle,
+      els.postContent,
+      els.timeText,
+      els.dateText,
+      els.sourceText,
+      els.retweets,
+      els.quotes,
+      els.likes
+    ].forEach(el => {
+      el.addEventListener('input', sync);
+    });
+
+    els.verifiedToggle.addEventListener('change', sync);
+    els.themeType.addEventListener('change', sync);
+    els.layoutType.addEventListener('change', e => applyLayout(e.target.value));
+
+    els.resetBtn.addEventListener('click', () => {
+      avatarDataUrl = defaultImageUrl;
+      els.profilePic.value = '';
+      els.fileName.textContent = 'No file chosen';
+
+      els.imageUrl.value = defaultImageUrl;
+      els.displayName.value = 'Benfei Tech';
+      els.handle.value = '@benfei';
+      els.verifiedToggle.checked = true;
+      els.themeType.value = 'light';
+      els.layoutType.value = 'android';
+      els.postContent.value = 'Benfei Tech is the best';
+      els.timeText.value = '12:35pm';
+      els.dateText.value = 'April 20, 2026';
+      els.sourceText.value = 'Twitter for Android';
+      els.retweets.value = '563.4K';
+      els.quotes.value = '8.9M';
+      els.likes.value = '8.7K';
+
+      els.avatarPreview.src = defaultImageUrl;
+      setCardTheme('light');
+      applyLayout('android');
+      sync();
+    });
+
+    els.downloadBtn.addEventListener('click', async () => {
+      const canvas = await html2canvas(els.postArea, {
+        scale: 2,
+        backgroundColor: els.themeType.value === 'dark' ? '#15202b' : '#ffffff',
+        useCORS: true
+      });
+
+      const link = document.createElement('a');
+      link.download = 'social-post-preview.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    loadImage(defaultImageUrl);
+    setCardTheme('light');
+    applyLayout('android');
+    sync();
+  </script>
+</body>
+</html>
