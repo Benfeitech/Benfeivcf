@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Receipt Editor</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f7;
+    margin: 0;
+    padding: 15px;
+    color: #111;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 950px;
+    margin: 0 auto;
+  }
+
+  .preview-section,
+  .editor {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  .preview-section h3,
+  .editor h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #111;
+  }
+
+  canvas {
+    width: 100%;
+    height: auto;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    display: block;
+    background: #fff;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: #6d28d9;
+  }
+
+  label {
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+  }
+
+  button {
+    background: #6d28d9;
+    color: #fff;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    background: #5b21b6;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      max-width: 1000px;
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .preview-section {
+      flex: 1;
+      position: sticky;
+      top: 15px;
+    }
+
+    .editor {
+      width: 350px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="preview-section">
+    <h3>Preview</h3>
+    <canvas id="receipt" width="420" height="600"></canvas>
+    <button onclick="download()">Download as PNG</button>
+  </div>
+
+  <div class="editor">
+    <h3>Edit Receipt</h3>
+
+    <label>Amount</label>
+    <input type="text" id="amount" value="5,000,000.00">
+
+    <label>Status</label>
+    <input type="text" id="status" value="Successful Transaction">
+
+    <label>Date & Time</label>
+    <input type="text" id="datetime" value="Apr 10, 2026 9:07:30 PM">
+
+    <label>Recipient Name</label>
+    <input type="text" id="recipient" value="UKAH OBINNA ONYEKA">
+
+    <label>Recipient Bank & Account</label>
+    <input type="text" id="recipientBank" value="Opay Bank | 906 132 4635">
+
+    <label>Sender Name</label>
+    <input type="text" id="sender" value="MUHAMMAD YUSUF">
+
+    <label>Sender Info</label>
+    <input type="text" id="senderInfo" value="915***7351">
+
+    <label>Transaction ID</label>
+    <input type="text" id="txid" value="0333qsyg8d81">
+
+    <label>Session ID</label>
+    <input type="text" id="sessionid" value="100033235739170 268370225783537">
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('receipt');
+  const ctx = canvas.getContext('2d');
+
+  // Replace with your own image URL if needed
+  const logoUrl = "https://res.cloudinary.com/dqqyvozdw/image/upload/v1777752825/s4olquxgeyk7z7ci0mie.png";
+  const logoImg = new Image();
+  logoImg.crossOrigin = "anonymous";
+  logoImg.decoding = "async";
+  logoImg.src = logoUrl;
+
+  const inputs = {
+    amount: document.getElementById('amount'),
+    status: document.getElementById('status'),
+    datetime: document.getElementById('datetime'),
+    recipient: document.getElementById('recipient'),
+    recipientBank: document.getElementById('recipientBank'),
+    sender: document.getElementById('sender'),
+    senderInfo: document.getElementById('senderInfo'),
+    txid: document.getElementById('txid'),
+    sessionid: document.getElementById('sessionid')
+  };
+
+  // ADJUST HERE: top logo position and size
+  const TOP_LOGO_X = 18;
+  const TOP_LOGO_Y = 8;     // move up/down
+  const TOP_LOGO_W = 120;   // width
+  const TOP_LOGO_H = 84;    // height
+
+  // ADJUST HERE: watermark visibility and size
+  const WM_LOGO_W = 150;
+  const WM_LOGO_H = 105;
+  const WM_OPACITY = 0.08;  // lower = less visible, higher = more visible
+  const WM_BLUR = 0.7;      // lower = less blur, 0 = no blur
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  function drawContainImage(img, dx, dy, dw, dh) {
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    if (!iw || !ih) return;
+
+    const ratio = Math.min(dw / iw, dh / ih);
+    const w = iw * ratio;
+    const h = ih * ratio;
+    const x = dx + (dw - w) / 2;
+    const y = dy + (dh - h) / 2;
+
+    ctx.drawImage(img, x, y, w, h);
+  }
+
+  function drawWatermark() {
+    if (!(logoImg.complete && logoImg.naturalWidth > 0)) return;
+
+    ctx.save();
+    ctx.globalAlpha = WM_OPACITY;
+    ctx.filter = `blur(${WM_BLUR}px)`;
+
+    for (let x = -220; x < canvas.width + 220; x += 170) {
+      for (let y = -140; y < canvas.height + 140; y += 120) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(-30 * Math.PI / 180);
+        drawContainImage(logoImg, 0, 0, WM_LOGO_W, WM_LOGO_H);
+        ctx.restore();
+      }
+    }
+
+    ctx.restore();
+    ctx.filter = 'none';
+  }
+
+  function drawLogo() {
+    if (!(logoImg.complete && logoImg.naturalWidth > 0)) return;
+    drawContainImage(logoImg, TOP_LOGO_X, TOP_LOGO_Y, TOP_LOGO_W, TOP_LOGO_H);
+  }
+
+  function fitRightText(text, maxWidth, font) {
+    ctx.save();
+    ctx.font = font;
+    let out = text;
+    while (out.length > 0 && ctx.measureText(out).width > maxWidth) {
+      out = out.slice(0, -1);
+    }
+    ctx.restore();
+    return out.length === text.length ? text : out + '…';
+  }
+
+  function wrapTextToWidth(text, maxWidth, font) {
+    ctx.save();
+    ctx.font = font;
+
+    const words = String(text).split(/\s+/);
+    const lines = [];
+    let line = '';
+
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line ? line + ' ' + words[i] : words[i];
+      if (ctx.measureText(testLine).width > maxWidth && line) {
+        lines.push(line);
+        line = words[i];
+      } else {
+        line = testLine;
+      }
+    }
+
+    if (line) lines.push(line);
+    ctx.restore();
+    return lines;
+  }
+
+  function drawWrappedRightAlignedText(text, x, y, maxWidth, lineHeight, font, color) {
+    const lines = wrapTextToWidth(text, maxWidth, font);
+    ctx.save();
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'alphabetic';
+
+    lines.forEach((line, index) => {
+      ctx.fillText(line, x, y + (index * lineHeight));
+    });
+
+    ctx.restore();
+    return lines.length;
+  }
+
+  function drawReceipt() {
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+
+    // Rounded receipt edges
+    roundRectPath(ctx, 0, 0, W, H, 18);
+    ctx.fill();
+
+    ctx.save();
+    roundRectPath(ctx, 0, 0, W, H, 18);
+    ctx.clip();
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    drawWatermark();
+    drawLogo();
+
+    const centerX = W / 2;
+    const rightX = W - 28;
+    const leftX = 20;
+
+    // ADJUST HERE: amount/status/date sizes and spacing
+    let y = 108;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+
+    ctx.fillStyle = '#6d28d9';
+    ctx.font = '500 27px Arial';   // smaller and lighter
+    ctx.fillText('₦ ' + inputs.amount.value, centerX, y);
+
+    y += 24;                       // tighter gap
+    ctx.fillStyle = '#222';
+    ctx.font = '500 14px Arial';   // smaller status
+    ctx.fillText(inputs.status.value, centerX, y);
+
+    y += 18;                       // tighter gap
+    ctx.fillStyle = '#9a9a9a';
+    ctx.font = '500 10px Arial';   // smaller date/time
+    ctx.fillText(inputs.datetime.value, centerX, y);
+
+    // Section 1
+    y += 46;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1b1b1b';
+    ctx.font = '500 17px Arial';
+    ctx.fillText('Recipient:', leftX, y);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#111';
+    ctx.font = '700 16px Arial';
+    ctx.fillText(inputs.recipient.value, rightX, y);
+
+    ctx.fillStyle = '#8f8f8f';
+    ctx.font = '500 15px Arial';
+    ctx.fillText(inputs.recipientBank.value, rightX, y + 20);
+
+    // Section 2
+    y += 64;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1b1b1b';
+    ctx.font = '500 17px Arial';
+    ctx.fillText('Sender:', leftX, y);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#111';
+    ctx.font = '700 16px Arial';
+    ctx.fillText(inputs.sender.value, rightX, y);
+
+    ctx.fillStyle = '#8f8f8f';
+    ctx.font = '500 15px Arial';
+    ctx.fillText(inputs.senderInfo.value, rightX, y + 20);
+
+    // Section 3
+    y += 64;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1b1b1b';
+    ctx.font = '700 17px Arial';
+    ctx.fillText('Transaction Info:', leftX, y);
+
+    y += 28;
+    ctx.font = '500 15px Arial';
+    ctx.fillStyle = '#8f8f8f';
+    ctx.fillText('Transaction Type', leftX, y);
+
+    y += 24;
+    ctx.fillText('Transaction ID', leftX, y);
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'right';
+    ctx.font = '700 15px Arial';
+    ctx.fillText(fitRightText(inputs.txid.value, 180, '700 15px Arial'), rightX, y);
+
+    y += 28;
+    ctx.fillStyle = '#8f8f8f';
+    ctx.textAlign = 'left';
+    ctx.font = '500 15px Arial';
+    ctx.fillText('Session ID', leftX, y);
+
+    // Session ID now wraps to next line instead of cutting
+    ctx.fillStyle = '#111';
+    const sessionLines = drawWrappedRightAlignedText(
+      inputs.sessionid.value,
+      rightX,
+      y,
+      170,        // max line width before wrapping
+      18,         // line spacing
+      '700 15px Arial',
+      '#111'
+    );
+
+    // Add extra gap if session ID becomes two lines
+    y += 18 * sessionLines + 8;
+
+    // Footer
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8f8f8f';
+    ctx.font = '500 12px Arial';
+    ctx.fillText('Enjoy Seamless and Unlimited Free Transfers to All Banks.', centerX, H - 24);
+
+    ctx.restore();
+  }
+
+  function download() {
+    const link = document.createElement('a');
+    link.download = 'receipt.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  Object.values(inputs).forEach(input => input.addEventListener('input', drawReceipt));
+  logoImg.onload = drawReceipt;
+  logoImg.onerror = drawReceipt;
+  drawReceipt();
+
+  window.addEventListener('resize', () => setTimeout(drawReceipt, 100));
+</script>
+
+</body>
+</html>
