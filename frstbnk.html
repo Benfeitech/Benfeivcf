@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt Generator</title>
+    <style>
+        :root {
+            --navy: #152b54;
+            --gold: #dcb12d;
+            --bg-color: #f4f7f6;
+            --input-border: #ccc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        canvas {
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .btn-download {
+            margin-top: 18px;
+            background-color: var(--navy);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn-download:hover {
+            background-color: #0b1a38;
+        }
+
+        .editor-panel {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .editor-panel h2 {
+            margin-top: 0;
+            color: var(--navy);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--navy);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="preview-panel">
+            <canvas id="receiptCanvas"></canvas>
+            <button class="btn-download" onclick="downloadReceipt()">Download Receipt</button>
+        </div>
+
+        <div class="editor-panel">
+            <h2>Edit Receipt Details</h2>
+
+            <div class="form-group"><label>Amount (₦)</label><input type="text" id="val-amount" value="200,000,000.00"></div>
+            <div class="form-group"><label>Date & Time</label><input type="text" id="val-date" value="Aril 14, 2026 16:26:27"></div>
+            <div class="form-group"><label>From</label><input type="text" id="val-from" value="*****16378"></div>
+            <div class="form-group"><label>Sender Name</label><input type="text" id="val-sender" value="OLAMIDE ENIOLA"></div>
+            <div class="form-group"><label>Beneficiary Name</label><input type="text" id="val-beneficiary" value="YUSUF AHMED MUSA"></div>
+            <div class="form-group"><label>Account No</label><input type="text" id="val-account" value="8154635786"></div>
+            <div class="form-group"><label>Bank</label><input type="text" id="val-bank" value="OPAY"></div>
+            <div class="form-group"><label>Transaction Type</label><input type="text" id="val-type" value="Interbank Transfer"></div>
+            <div class="form-group"><label>Reference No</label><input type="text" id="val-ref" value="000016260785460646078543014739"></div>
+            <div class="form-group"><label>Narration</label><input type="text" id="val-narration" value="NONE"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('receiptCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const logoUrl = "https://res.cloudinary.com/dqqyvozdw/image/upload/v1777749581/bmnenmzwcqwx2kbg8phb.png";
+        let logoImage = null;
+
+        if (logoUrl) {
+            logoImage = new Image();
+            logoImage.crossOrigin = "Anonymous";
+            logoImage.src = logoUrl;
+            logoImage.onload = () => drawReceipt();
+            logoImage.onerror = () => drawReceipt();
+        }
+
+        const inputs = {
+            amount: document.getElementById('val-amount'),
+            date: document.getElementById('val-date'),
+            from: document.getElementById('val-from'),
+            sender: document.getElementById('val-sender'),
+            beneficiary: document.getElementById('val-beneficiary'),
+            account: document.getElementById('val-account'),
+            bank: document.getElementById('val-bank'),
+            type: document.getElementById('val-type'),
+            ref: document.getElementById('val-ref'),
+            narration: document.getElementById('val-narration')
+        };
+
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', drawReceipt);
+        });
+
+        function fitText(ctx, text, maxWidth) {
+            if (ctx.measureText(text).width <= maxWidth) return text;
+            let truncated = text;
+            while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth) {
+                truncated = truncated.slice(0, -1);
+            }
+            return truncated + '…';
+        }
+
+        function drawLogo(image, x, y, maxW, maxH) {
+            const iw = image.naturalWidth;
+            const ih = image.naturalHeight;
+            if (!iw || !ih) return;
+
+            const ratio = Math.min(maxW / iw, maxH / ih);
+            const w = iw * ratio;
+            const h = ih * ratio;
+
+            const dx = x + (maxW - w) / 2;
+            const dy = y + (maxH - h) / 2;
+
+            ctx.drawImage(image, dx, dy, w, h);
+        }
+
+        function drawReceipt() {
+            const cssWidth = 600;
+            const cssHeight = 1000;
+            const scale = 2;
+
+            canvas.width = cssWidth * scale;
+            canvas.height = cssHeight * scale;
+            canvas.style.width = cssWidth + 'px';
+            canvas.style.height = cssHeight + 'px';
+
+            ctx.setTransform(scale, 0, 0, scale, 0, 0);
+            ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+            const leftPad = 50;
+            const rightPad = 50;
+
+            // Bigger logo again
+            const logoBoxW = 235;
+            const logoBoxH = 108;
+            const logoX = cssWidth - rightPad - logoBoxW;
+            const logoY = 12;
+
+            if (logoImage && logoImage.complete && logoImage.naturalWidth !== 0) {
+                drawLogo(logoImage, logoX, logoY, logoBoxW, logoBoxH);
+            } else {
+                ctx.strokeStyle = '#cccccc';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(logoX + 28, logoY + 22, 140, 56);
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#cccccc';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('LOGO', logoX + 98, logoY + 52);
+            }
+
+            // Header, slightly closer up but still separated from logo
+            ctx.textAlign = 'center';
+
+            ctx.fillStyle = '#152b54';
+            ctx.font = 'bold 26px Arial';
+            ctx.fillText('Transaction Receipt', cssWidth / 2, 190);
+
+            ctx.fillStyle = '#9a9a9a';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Successful', cssWidth / 2, 226);
+
+            ctx.fillStyle = '#152b54';
+            ctx.font = 'bold 36px Arial';
+            ctx.fillText('₦ ' + inputs.amount.value, cssWidth / 2, 268);
+
+            ctx.fillStyle = '#777777';
+            ctx.font = '18px Arial';
+            ctx.fillText(inputs.date.value, cssWidth / 2, 304);
+
+            ctx.strokeStyle = '#152b54';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(50, 332);
+            ctx.lineTo(cssWidth - 50, 332);
+            ctx.stroke();
+
+            // Details section compressed so footer stays visible
+            const startY = 370;
+            const lineSpacing = 38;
+            const labels = [
+                'From:',
+                'Sender Name:',
+                'Beneficiary Name:',
+                'Account No:',
+                'Bank:',
+                'Transaction Type:',
+                'Reference No:',
+                'Narration:'
+            ];
+
+            const values = [
+                inputs.from.value,
+                inputs.sender.value,
+                inputs.beneficiary.value,
+                inputs.account.value,
+                inputs.bank.value,
+                inputs.type.value,
+                inputs.ref.value,
+                inputs.narration.value
+            ];
+
+            const labelX = 50;
+            const valueX = 220;
+            const valueMaxWidth = cssWidth - valueX - 50;
+
+            ctx.textAlign = 'left';
+
+            for (let i = 0; i < labels.length; i++) {
+                const y = startY + (i * lineSpacing);
+
+                ctx.fillStyle = '#dcb12d';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText(labels[i], labelX, y);
+
+                ctx.fillStyle = '#787878';
+                ctx.font = '16px Arial';
+                ctx.fillText(fitText(ctx, values[i], valueMaxWidth), valueX, y);
+            }
+
+            const footerY = startY + (labels.length * lineSpacing) + 12;
+
+            ctx.strokeStyle = '#152b54';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(50, footerY);
+            ctx.lineTo(cssWidth - 50, footerY);
+            ctx.stroke();
+
+            // Footer elements restored and kept visible
+            ctx.fillStyle = '#666666';
+            ctx.font = '11px Arial';
+            ctx.fillText("For more information, please contact us: 02014485500, 07080625000", 50, footerY + 28);
+            ctx.fillText("firstcontactcomplaints@firstbanknigeria.com complaints@firstbanknigeria.com", 50, footerY + 43);
+            ctx.fillText("www.firstbanknigeria.com", 50, footerY + 58);
+
+            ctx.fillStyle = '#152b54';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText("Get airtime in seconds. Dial *894*amount#.", 50, footerY + 92);
+            ctx.fillText("Out of data? Dial *894*2#. Need an account? Dial *894*0#.", 50, footerY + 117);
+
+            ctx.fillStyle = '#a8a8a8';
+            ctx.font = '9px Arial';
+
+            const disclaimer1 = "Your transfer has been successful and the beneficiary's account will be credited.";
+            const disclaimer2 = "However, this does not serve as confirmation of credit into the beneficiary's account.";
+            const disclaimer3 = "Due to the nature of the internet, transactions may be subject to interruption, transmission blackout,";
+            const disclaimer4 = "delayed transmission and incorrect data transmission. The bank is not liable for malfunctions in communications";
+            const disclaimer5 = "facilities not within its control that may affect the accuracy or timeliness of messages and transactions you send.";
+            const disclaimer6 = "All transactions are subject to verification and normal fraud checks.";
+
+            ctx.fillText(disclaimer1, 50, footerY + 150);
+            ctx.fillText(disclaimer2, 50, footerY + 162);
+            ctx.fillText(disclaimer3, 50, footerY + 174);
+            ctx.fillText(disclaimer4, 50, footerY + 186);
+            ctx.fillText(disclaimer5, 50, footerY + 198);
+            ctx.fillText(disclaimer6, 50, footerY + 210);
+        }
+
+        function downloadReceipt() {
+            const link = document.createElement('a');
+            link.download = `receipt_${inputs.ref.value}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        window.onload = drawReceipt;
+    </script>
+</body>
+</html>
