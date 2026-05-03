@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Receipt Generator</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+   .preview-container {
+        background: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 750px; /* Increased to accommodate the extra padding */
+        text-align: center;
+    }
+    canvas {
+        max-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+    button {
+        background: #e60000;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+    }
+    button:hover {
+        background: #c40000;
+    }
+   .form-container {
+        background: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 750px;
+    }
+   .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #333;
+    }
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    h3 {
+        margin-top: 0;
+        color: #333;
+    }
+</style>
+</head>
+<body>
+
+<div class="preview-container">
+    <h3>Preview</h3>
+    <canvas id="receiptCanvas" width="750" height="1150"></canvas>
+    <br>
+    <button id="downloadBtn">Download PNG</button>
+</div>
+
+<div class="form-container">
+    <h3>Edit Receipt Details</h3>
+
+    <div class="form-group">
+        <label>Date Line</label>
+        <input type="text" id="dateLine" value="Thursday, December 25, 2025">
+    </div>
+
+    <div class="form-group">
+        <label>Transaction Type</label>
+        <input type="text" id="txnType" value="Inter-Bank Transfer">
+    </div>
+
+    <div class="form-group">
+        <label>Transaction Date</label>
+        <input type="text" id="txnDate" value="25-Dec-2025 10:16:25 PM">
+    </div>
+
+    <div class="form-group">
+        <label>Debit Account</label>
+        <input type="text" id="debitAcc" value="SAMPLE COMPANY LTD(1234**)">
+    </div>
+
+    <div class="form-group">
+        <label>Credit Account</label>
+        <input type="text" id="creditAcc" value="1234567890">
+    </div>
+
+    <div class="form-group">
+        <label>Beneficiary</label>
+        <input type="text" id="beneficiary" value="JOHN DOE">
+    </div>
+
+    <div class="form-group">
+        <label>Bank</label>
+        <input type="text" id="bank" value="SAMPLE BANK PLC">
+    </div>
+
+    <div class="form-group">
+        <label>Narration</label>
+        <input type="text" id="narration" value="Sample Payment">
+    </div>
+
+    <div class="form-group">
+        <label>Status</label>
+        <input type="text" id="status" value="Success">
+    </div>
+
+    <div class="form-group">
+        <label>Amount</label>
+        <input type="text" id="amount" value="₦50,000,000.00">
+    </div>
+
+    <div class="form-group">
+        <label>Disclaimer</label>
+        <textarea id="disclaimer" rows="4">DISCLAIMER: Your transaction has been successfully processed.
+Note, however, that completion of any transfer may be affected by other factors including but not limited to transmission errors, incomplete information, fluctuations on the network/internet, interruptions, glitch, delayed information or other matters beyond the Bank's control which may impact on the transaction and for which the Bank will not be liable. All transactions are subject to confirmation and verification.</textarea>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('receiptCanvas');
+const ctx = canvas.getContext('2d');
+
+// SET YOUR LOGO URL HERE
+const LOGO_URL = 'https://res.cloudinary.com/dqqyvozdw/image/upload/v1777838668/w51snq1r9u5bkdzxuz1c.png';
+
+let logoImg = new Image();
+logoImg.crossOrigin = 'anonymous';
+logoImg.onload = drawReceipt;
+logoImg.src = LOGO_URL;
+
+const fields = [
+    'dateLine', 'txnType', 'txnDate', 'debitAcc', 'creditAcc',
+    'beneficiary', 'bank', 'narration', 'status', 'amount', 'disclaimer'
+];
+
+fields.forEach(id => {
+    document.getElementById(id).addEventListener('input', drawReceipt);
+});
+
+function drawReceipt() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Background
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Border
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+    let y = 100; // Increased starting Y
+    const padding = 60; // Increased padding from the edges
+    const labelX = padding;
+    const valueX = 290; // Adjusted for the wider layout
+    const lineHeight = 65; // Much wider spacing between item rows
+
+    // Header row
+    ctx.fillStyle = '#666';
+    ctx.font = 'bold 24px Arial'; 
+    ctx.textAlign = 'left';
+    ctx.fillText('TRANSACTION RECEIPT', labelX, y);
+
+    // Logo - larger and aligned properly with the new padding
+    if (logoImg.complete) {
+        const logoHeight = 85; // Increased from 65
+        const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+        ctx.drawImage(logoImg, canvas.width - padding - logoWidth, y - 55, logoWidth, logoHeight);
+    }
+
+    y += 80;
+
+    // Red date bar
+    ctx.fillStyle = '#e60000';
+    ctx.fillRect(padding, y, canvas.width - padding*2, 55);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(document.getElementById('dateLine').value, canvas.width/2, y + 36);
+
+    y += 100; // Pushed items further down below the red bar
+    ctx.textAlign = 'left';
+
+    // Details 
+    const details = [
+        ['Transaction Type:', document.getElementById('txnType').value],
+        ['Transaction Date:', document.getElementById('txnDate').value],
+        ['Debit Account:', document.getElementById('debitAcc').value],
+        ['Credit Account:', document.getElementById('creditAcc').value],
+        ['Beneficiary:', document.getElementById('beneficiary').value],
+        ['Bank:', document.getElementById('bank').value],
+        ['Narration:', document.getElementById('narration').value],
+        ['Status:', document.getElementById('status').value],
+        ['Amount:', document.getElementById('amount').value],
+    ];
+
+    details.forEach(([label, value]) => {
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText(label, labelX, y);
+
+        ctx.font = '20px Arial';
+        ctx.fillText(value, valueX, y);
+
+        // Separator line - Made more visible and centered nicely below text
+        ctx.strokeStyle = '#ccc'; // Darkened from #eee to #ccc
+        ctx.lineWidth = 1.5; // Made slightly thicker
+        ctx.beginPath();
+        ctx.moveTo(padding, y + 32); // Creates an equal margin above and below the line
+        ctx.lineTo(canvas.width - padding, y + 32);
+        ctx.stroke();
+
+        y += lineHeight;
+    });
+
+    // Disclaimer 
+    y += 30; // Added extra gap before disclaimer
+    ctx.font = 'bold 16px Arial'; 
+    ctx.fillText('DISCLAIMER:', padding, y);
+    y += 30; // Added gap before disclaimer text
+
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#444';
+    const disclaimerText = document.getElementById('disclaimer').value;
+    const words = disclaimerText.split(' ');
+    let line = '';
+    const maxWidth = canvas.width - padding*2;
+
+    for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && i > 0) {
+            ctx.fillText(line, padding, y);
+            line = words[i] + ' ';
+            y += 26; 
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line, padding, y);
+}
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'receipt.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
+// Initial draw
+drawReceipt();
+</script>
+
+</body>
+</html>
