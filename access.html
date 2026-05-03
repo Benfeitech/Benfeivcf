@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Bank Receipt Generator</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f0f0f0;
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+   .preview-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        width: 100%;
+        max-width: 850px;
+        text-align: center;
+    }
+    canvas {
+        max-width: 100%;
+        border: 1px solid #eee;
+        background: #fff;
+    }
+    button {
+        background: #003366;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #e87722;
+    }
+   .form-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 850px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+   .form-group {
+        margin-bottom: 5px;
+    }
+    .full-width {
+        grid-column: span 2;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #003366;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    h3 {
+        margin-top: 0;
+        color: #333;
+        grid-column: span 2;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="preview-container">
+    <h3>Receipt Preview</h3>
+    <canvas id="receiptCanvas" width="800" height="1300"></canvas>
+    <br>
+    <button id="downloadBtn">Download Receipt PNG</button>
+</div>
+
+<div class="form-container">
+    <h3>Edit Receipt Details</h3>
+
+    <div class="form-group">
+        <label>Transaction Amount</label>
+        <input type="text" id="amount" value="N90,000,000">
+    </div>
+
+    <div class="form-group">
+        <label>Transaction Type</label>
+        <input type="text" id="txnType" value="INTER-BANK">
+    </div>
+
+    <div class="form-group">
+        <label>Transaction Date</label>
+        <input type="text" id="txnDate" value="2022-05-07 18:42:48">
+    </div>
+
+    <div class="form-group">
+        <label>Sender</label>
+        <input type="text" id="sender" value="FLORENCE MORADEKE FATUROTI">
+    </div>
+
+    <div class="form-group">
+        <label>Beneficiary Name</label>
+        <input type="text" id="beneficiaryName" value="BIBILARI SHERIFAT TITILAYO">
+    </div>
+
+    <div class="form-group">
+        <label>Beneficiary Account</label>
+        <input type="text" id="beneficiaryAcc" value="0049314374">
+    </div>
+
+    <div class="form-group">
+        <label>Beneficiary Bank</label>
+        <input type="text" id="beneficiaryBank" value="GTBank Plc">
+    </div>
+
+    <div class="form-group">
+        <label>Remark</label>
+        <input type="text" id="remark" value="">
+    </div>
+
+    <div class="form-group full-width">
+        <label>Transaction Reference</label>
+        <input type="text" id="txnRef" value="NXG000014220507184231220135653380">
+    </div>
+
+    <div class="form-group full-width">
+        <label>Transaction Status</label>
+        <input type="text" id="status" value="Transfer Request Successful">
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('receiptCanvas');
+const ctx = canvas.getContext('2d');
+
+const LOGO_URL = 'https://res.cloudinary.com/dqqyvozdw/image/upload/v1777840299/yppi6z8foayjrazvsn5o.png';
+
+let logoImg = new Image();
+logoImg.crossOrigin = 'anonymous';
+logoImg.onload = drawReceipt;
+logoImg.src = LOGO_URL;
+
+const fields = [
+    'amount', 'txnType', 'txnDate', 'sender', 'beneficiaryName', 
+    'beneficiaryAcc', 'beneficiaryBank', 'remark', 'txnRef', 'status'
+];
+
+fields.forEach(id => {
+    document.getElementById(id).addEventListener('input', drawReceipt);
+});
+
+function drawReceipt() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // White background
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let y = 100;
+    const padding = 70;
+    const labelX = padding;
+    const valueX = 320; 
+    const rowGap = 75; 
+
+    // 1. TOP LOGO (Left)
+    if (logoImg.complete) {
+        const logoHeight = 110; 
+        const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+        ctx.drawImage(logoImg, padding, 60, logoWidth, logoHeight);
+    }
+
+    // 2. TOP GRAPHIC (Right) - Spaced horizontally
+    // Slash moved further left (now starts at width-280 instead of width-180)
+    ctx.strokeStyle = '#e87722';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width - 200, 10);
+    ctx.lineTo(canvas.width - 300, 180);
+    ctx.stroke();
+
+    // Text stays aligned to the right padding
+    ctx.fillStyle = '#e87722';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText('more than banking', canvas.width - padding, 115);
+
+    y = 260; // Pushed content down slightly more
+
+    // 3. TITLE
+    ctx.fillStyle = '#003366';
+    ctx.font = 'bold 42px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Transaction Receipt', canvas.width / 2, y);
+
+    y += 50;
+    ctx.fillStyle = '#888';
+    ctx.font = '20px Arial';
+    ctx.fillText('Generated from AccessMore on 07/05/22 18:43:19', canvas.width / 2, y);
+
+    y += 100;
+    ctx.textAlign = 'left';
+
+    // 4. DATA TABLE
+    const details = [
+        ['Transaction Amount', document.getElementById('amount').value],
+        ['Transaction Type', document.getElementById('txnType').value],
+        ['Transaction Date', document.getElementById('txnDate').value],
+        ['Sender', document.getElementById('sender').value],
+        ['Beneficiary', document.getElementById('beneficiaryName').value + '\n' + 
+                        document.getElementById('beneficiaryAcc').value + '\n' + 
+                        document.getElementById('beneficiaryBank').value],
+        ['Remark', document.getElementById('remark').value],
+        ['Transaction Reference', document.getElementById('txnRef').value],
+        ['Transaction Status', document.getElementById('status').value],
+    ];
+
+    details.forEach(([label, value]) => {
+        ctx.fillStyle = '#e87722';
+        ctx.font = 'bold 22px Arial';
+        ctx.fillText(label, labelX, y);
+
+        ctx.fillStyle = '#003366';
+        ctx.font = 'bold 22px Arial';
+        
+        const lines = value.split('\n');
+        lines.forEach((line, i) => {
+            ctx.fillText(line, valueX, y + (i * 32));
+        });
+
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(padding, y + 25 + ((lines.length - 1) * 32));
+        ctx.lineTo(canvas.width - padding, y + 25 + ((lines.length - 1) * 32));
+        ctx.stroke();
+
+        y += rowGap + ((lines.length - 1) * 32);
+    });
+
+    // 5. FOOTER
+    y += 20;
+    ctx.fillStyle = '#888';
+    ctx.font = '16px Arial';
+    const footerText = [
+        'If you have any questions or would like more information, please call our 24-hour Contact Centre on',
+        '0700CallAccess, 0700 3000000, +234 1-2712005-7, +234 1-2802500 or send an email to',
+        'contactcenter@accessbankplc.com',
+        'Thank you for choosing Access Bank.'
+    ];
+
+    footerText.forEach((line, idx) => {
+        if(idx === 2) ctx.fillStyle = '#003366';
+        else ctx.fillStyle = '#888';
+        ctx.fillText(line, padding, y);
+        y += 28;
+    });
+
+    y += 40;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '16px Arial';
+    ctx.fillText('Banking with Access: Branch | ATM | Online | Mobile | Contact centre', padding, y);
+}
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'Access_Bank_Receipt.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
+drawReceipt();
+</script>
+
+</body>
+</html>
