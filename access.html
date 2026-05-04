@@ -96,6 +96,11 @@
 <div class="form-container">
     <h3>Edit Receipt Details</h3>
 
+    <div class="form-group full-width">
+        <label>Generated Text Under Title</label>
+        <input type="text" id="generatedText" value="Generated from AccessMore on 07/05/22 18:43:19">
+    </div>
+
     <div class="form-group">
         <label>Transaction Amount</label>
         <input type="text" id="amount" value="N90,000,000">
@@ -159,7 +164,7 @@ logoImg.onload = drawReceipt;
 logoImg.src = LOGO_URL;
 
 const fields = [
-    'amount', 'txnType', 'txnDate', 'sender', 'beneficiaryName', 
+    'generatedText', 'amount', 'txnType', 'txnDate', 'sender', 'beneficiaryName', 
     'beneficiaryAcc', 'beneficiaryBank', 'remark', 'txnRef', 'status'
 ];
 
@@ -213,7 +218,7 @@ function drawReceipt() {
     y += 50;
     ctx.fillStyle = '#888';
     ctx.font = '20px Arial';
-    ctx.fillText('Generated from AccessMore on 07/05/22 18:43:19', canvas.width / 2, y);
+    ctx.fillText(document.getElementById('generatedText').value, canvas.width / 2, y);
 
     y += 100;
     ctx.textAlign = 'left';
