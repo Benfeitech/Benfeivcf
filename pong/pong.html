@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BenfeiVTU Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --primary: #FF6600; /* Main Orange */
+    --primary-dark: #E65C00;
+    --primary-light: #FF8533;
+    --accent: #FFDAB3; /* Light orange */
+    --dark: #1F1F1F;
+    --gray: #F5F5F5;
+    --white: #FFFFFF;
+    --success: #28A745;
+    --danger: #DC3545;
+    --text: #333333;
+  }
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background: var(--gray);
+    color: var(--text);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background: var(--primary);
+    color: var(--white);
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 20px 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 30px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .logo i {
+    background: var(--white);
+    color: var(--primary);
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: var(--primary-dark);
+    border-left: 4px solid var(--white);
+  }
+
+  /* Main Content */
+  .main {
+    margin-left: 250px;
+    padding: 20px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+  }
+
+  /* Cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .card.balance {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: var(--white);
+  }
+
+  .card h3 {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+
+  .card h2 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .card .icon {
+    float: right;
+    font-size: 28px;
+    opacity: 0.3;
+  }
+
+  /* Quick Actions */
+  .actions {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .actions h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+  }
+
+  .action-btn {
+    background: var(--accent);
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--dark);
+  }
+
+  .action-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .action-btn i {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* Table */
+  .transactions {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  th {
+    color: var(--primary-dark);
+    font-size: 14px;
+  }
+
+  .status.success { color: var(--success); font-weight: 600; }
+  .status.failed { color: var(--danger); font-weight: 600; }
+
+  @media(max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <i class="fa-solid fa-bolt"></i>
+      BenfeiVTU
+    </div>
+    <div class="nav-item active"><i class="fa-solid fa-gauge"></i> Dashboard</div>
+    <div class="nav-item"><i class="fa-solid fa-mobile-screen"></i> Buy Airtime</div>
+    <div class="nav-item"><i class="fa-solid fa-wifi"></i> Buy Data</div>
+    <div class="nav-item"><i class="fa-solid fa-tv"></i> Cable TV</div>
+    <div class="nav-item"><i class="fa-solid fa-lightbulb"></i> Electricity</div>
+    <div class="nav-item"><i class="fa-solid fa-wallet"></i> Wallet</div>
+    <div class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> History</div>
+    <div class="nav-item"><i class="fa-solid fa-gear"></i> Settings</div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="header">
+      <h1>Welcome Back 👋</h1>
+      <div class="user">
+        <img src="https://i.pravatar.cc/40" alt="user">
+        <span>Benfei</span>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+      <div class="card balance">
+        <i class="fa-solid fa-wallet icon"></i>
+        <h3>Wallet Balance</h3>
+        <h2>₦24,500.00</h2>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-mobile-screen icon"></i>
+        <h3>Airtime Spent</h3>
+        <h2>₦8,200.00</h2>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-wifi icon"></i>
+        <h3>Data Spent</h3>
+        <h2>₦12,400.00</h2>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-chart-line icon"></i>
+        <h3>Total Transactions</h3>
+        <h2>142</h2>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions">
+      <h2><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
+      <div class="action-grid">
+        <button class="action-btn"><i class="fa-solid fa-mobile-screen"></i> Airtime</button>
+        <button class="action-btn"><i class="fa-solid fa-wifi"></i> Data</button>
+        <button class="action-btn"><i class="fa-solid fa-tv"></i> Cable TV</button>
+        <button class="action-btn"><i class="fa-solid fa-lightbulb"></i> Electricity</button>
+        <button class="action-btn"><i class="fa-solid fa-money-bill-transfer"></i> Fund Wallet</button>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="transactions">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Details</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><i class="fa-solid fa-wifi"></i> MTN Data</td>
+            <td>2GB - 0803***1234</td>
+            <td>₦1,000</td>
+            <td class="status success">Success</td>
+          </tr>
+          <tr>
+            <td><i class="fa-solid fa-mobile-screen"></i> Airtel Airtime</td>
+            <td>₦500 - 0701***5678</td>
+            <td>₦500</td>
+            <td class="status success">Success</td>
+          </tr>
+          <tr>
+            <td><i class="fa-solid fa-tv"></i> DSTV Subscription</td>
+            <td>Compact - Smartcard 1234</td>
+            <td>₦11,500</td>
+            <td class="status failed">Failed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
