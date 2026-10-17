@@ -4,95 +4,200 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OPay Transaction Receipt Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
+    * { box-sizing: border-box; }
+
     body {
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f5f5f5;
+        font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
         margin: 0;
-        padding: 30px 20px;
+        padding: 40px 20px;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 32px;
+        color: #2b2b2b;
+        background:
+            radial-gradient(ellipse at 18% 0%, rgba(255,255,255,0.95), transparent 55%),
+            radial-gradient(ellipse at 100% 100%, rgba(255,255,255,0.85), transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.45), transparent 70%),
+            linear-gradient(145deg, #faf8f4 0%, #efede7 45%, #e6e2da 100%);
+        background-attachment: fixed;
     }
-.preview-container {
-        background: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+    /* ---------- Cards ---------- */
+    .preview-container,
+    .form-container {
+        background: linear-gradient(180deg, #ffffff 0%, #fbfaf7 100%);
+        border: 1px solid rgba(255,255,255,0.85);
+        border-radius: 22px;
+        padding: 30px;
         width: 100%;
-        max-width: 750px;
-        text-align: center;
+        max-width: 800px;
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.9) inset,
+            0 2px 4px rgba(80,70,50,0.04),
+            0 14px 30px rgba(80,70,50,0.09),
+            0 30px 64px rgba(80,70,50,0.07);
+        transition: transform .28s ease, box-shadow .28s ease;
     }
+    .preview-container:hover,
+    .form-container:hover {
+        transform: translateY(-3px);
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.9) inset,
+            0 4px 8px rgba(80,70,50,0.05),
+            0 20px 40px rgba(80,70,50,0.12),
+            0 42px 80px rgba(80,70,50,0.08);
+    }
+
+    h3 {
+        margin: 0 0 18px;
+        color: #2b2b2b;
+        font-size: 17px;
+        letter-spacing: .2px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    h3 i { color: #00b386; font-size: 15px; }
+
+    /* ---------- Canvas ---------- */
     canvas {
+        display: block;
+        margin: 0 auto;
         max-width: 100%;
-        border: 1px solid #eee;
-        border-radius: 8px;
-    }
-    button {
-        background: #00b386;
-        color: #fff;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 15px;
-        font-weight: bold;
-    }
-    button:hover { background: #009973; }
-.form-container {
+        border-radius: 14px;
+        border: 1px solid #eceae4;
+        box-shadow:
+            0 2px 6px rgba(80,70,50,0.05),
+            0 10px 24px rgba(80,70,50,0.07);
         background: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        width: 100%;
-        max-width: 750px;
     }
-.form-group { margin-bottom: 15px; }
+
+    /* ---------- Buttons ---------- */
+    .button-row {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 22px;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 13px 26px;
+        border-radius: 11px;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: .2px;
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn i { font-size: 14px; }
+
+    .btn-primary {
+        background: linear-gradient(180deg, #00c896 0%, #00a87c 100%);
+        color: #fff;
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.28) inset,
+            0 6px 16px rgba(0,179,134,0.35);
+    }
+    .btn-primary:hover {
+        background: linear-gradient(180deg, #00d4a0 0%, #00b386 100%);
+        transform: translateY(-2px);
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.28) inset,
+            0 12px 24px rgba(0,179,134,0.42);
+    }
+    .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(0,179,134,0.35);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(180deg, #ffffff 0%, #f4f1ea 100%);
+        color: #007a5a;
+        border: 1px solid #dcece5;
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.95) inset,
+            0 6px 16px rgba(80,70,50,0.10);
+    }
+    .btn-secondary:hover {
+        background: linear-gradient(180deg, #ffffff 0%, #e8f6f0 100%);
+        color: #009973;
+        transform: translateY(-2px);
+        box-shadow:
+            0 1px 0 rgba(255,255,255,0.95) inset,
+            0 12px 24px rgba(80,70,50,0.14);
+    }
+    .btn-secondary:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(80,70,50,0.12);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning i { animation: spin .65s linear; }
+
+    /* ---------- Form ---------- */
+    .form-group { margin-bottom: 16px; }
     label {
         display: block;
-        font-weight: bold;
-        margin-bottom: 6px;
-        color: #333;
-        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 7px;
+        color: #4a4a4a;
+        font-size: 13px;
+        letter-spacing: .2px;
     }
-    input, textarea {
+    input {
         width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+        padding: 12px 14px;
+        border: 1px solid #e3ded4;
+        border-radius: 11px;
         font-size: 14px;
-        box-sizing: border-box;
+        background: #fdfcfa;
+        color: #2b2b2b;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
-    h3 { margin-top: 0; color: #333; }
+    input:hover { border-color: #d3cdc0; background: #ffffff; }
+    input:focus {
+        outline: none;
+        border-color: #00b386;
+        background: #ffffff;
+        box-shadow:
+            0 0 0 4px rgba(0,179,134,0.14),
+            inset 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    @media (max-width: 600px) {
+        body { padding: 24px 14px; }
+        .preview-container, .form-container { padding: 20px; border-radius: 18px; }
+        .btn { flex: 1 1 auto; justify-content: center; }
+    }
 </style>
 </head>
 <body>
 
 <div class="preview-container">
-    <h3>Preview</h3>
+    <h3><i class="fa-solid fa-eye"></i> Preview</h3>
     <canvas id="receiptCanvas" width="750" height="900"></canvas>
-    <br>
-    <button id="downloadBtn">Download PNG</button>
+    <div class="button-row">
+        <button id="updateBtn" class="btn btn-secondary"><i class="fa-solid fa-rotate"></i> Update</button>
+        <button id="downloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download PNG</button>
+    </div>
 </div>
 
 <div class="form-container">
-    <h3>Edit Receipt Details</h3>
+    <h3><i class="fa-solid fa-pen-to-square"></i> Edit Receipt Details</h3>
 
     <div class="form-group">
         <label>Amount</label>
         <input type="text" id="amount" value="₦50,000,000.00">
-    </div>
-
-    <div class="form-group">
-        <label>Status</label>
-        <input type="text" id="status" value="Successful">
-    </div>
-
-    <div class="form-group">
-        <label>Date & Time</label>
-        <input type="text" id="datetime" value="May 6th, 2026 11:39:54">
     </div>
 
     <div class="form-group">
@@ -101,7 +206,7 @@
     </div>
 
     <div class="form-group">
-        <label>Recipient Bank & Account</label>
+        <label>Recipient Bank &amp; Account</label>
         <input type="text" id="recipientBank" value="OPay | 904 321 7521">
     </div>
 
@@ -111,28 +216,8 @@
     </div>
 
     <div class="form-group">
-        <label>Sender Bank & Account</label>
+        <label>Sender Bank &amp; Account</label>
         <input type="text" id="senderBank" value="PalmPay | 809****321">
-    </div>
-
-    <div class="form-group">
-        <label>Transaction Type</label>
-        <input type="text" id="txnType" value="Bank Deposit">
-    </div>
-
-    <div class="form-group">
-        <label>Transaction No.</label>
-        <input type="text" id="txnNo" value="260548512322164652134522">
-    </div>
-
-    <div class="form-group">
-        <label>Session ID</label>
-        <input type="text" id="sessionId" value="100033248615093348567391563527">
-    </div>
-
-    <div class="form-group">
-        <label>Footer Text</label>
-        <textarea id="footer" rows="3">Enjoy a better life with OPay. Get free transfers, withdrawals, bill payments, instant loans, and good annual interest On your savings. OPay is licensed by the Central Bank of Nigeria and insured by the NDIC.</textarea>
     </div>
 </div>
 
@@ -140,7 +225,7 @@
 const canvas = document.getElementById('receiptCanvas');
 const ctx = canvas.getContext('2d');
 
-// SET YOUR LOGO URLS HERE
+/* ---------- Assets ---------- */
 const LOGO_URL = 'https://res.cloudinary.com/dqqyvozdw/image/upload/v1776677700/prfvpualmp6vkqwn2qjo.png';
 const WATERMARK_URL = 'https://res.cloudinary.com/dqqyvozdw/image/upload/v1777899038/mlud9ztwlgjkceqyjkjp.png';
 
@@ -154,15 +239,138 @@ watermarkImg.crossOrigin = 'anonymous';
 watermarkImg.onload = drawReceipt;
 watermarkImg.src = WATERMARK_URL;
 
-const fields = [
-    'amount', 'status', 'datetime', 'recipientName', 'recipientBank',
-    'senderName', 'senderBank', 'txnType', 'txnNo', 'sessionId', 'footer'
-];
+/* ---------- Auto-generated / hidden receipt data ---------- */
+const DEFAULT_STATUS   = 'Successful';
+const DEFAULT_TXN_TYPE = 'Bank Deposit';
+const DEFAULT_FOOTER   = 'Enjoy a better life with OPay. Get free transfers, withdrawals, bill payments, instant loans, and good annual interest On your savings. OPay is licensed by the Central Bank of Nigeria and insured by the NDIC.';
 
-fields.forEach(id => {
-    document.getElementById(id).addEventListener('input', drawReceipt);
+// Templates are only used for their LENGTH and fixed leading digits
+const TXN_NO_TEMPLATE     = '260548512322164652134522';        // first 2 digits preserved
+const SESSION_ID_TEMPLATE = '100033248615093348567391563527';  // first 5 digits preserved
+
+const receipt = {
+    status:    DEFAULT_STATUS,
+    txnType:   DEFAULT_TXN_TYPE,
+    txnNo:     TXN_NO_TEMPLATE,
+    sessionId: SESSION_ID_TEMPLATE,
+    datetime:  'May 6th, 2026 11:39:54',
+    footer:    DEFAULT_FOOTER
+};
+
+/* ---------- Helpers ---------- */
+
+// Keep the first `keep` characters, randomize the rest with digits
+function randomizeTail(template, keep) {
+    const head = template.slice(0, keep);
+    let tail = '';
+    for (let i = keep; i < template.length; i++) {
+        tail += Math.floor(Math.random() * 10);
+    }
+    return head + tail;
+}
+
+// Current date & time in WAT (UTC+1), e.g. "May 6th, 2026 11:39:54"
+function getWATDateTime() {
+    const now = new Date();
+    const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const wat = new Date(utcMs + (60 * 60 * 1000)); // UTC+1
+
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+
+    const day = wat.getDate();
+    const ordinals = ['th','st','nd','rd'];
+    const v = day % 100;
+    const suffix = ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0];
+
+    const pad = n => String(n).padStart(2, '0');
+
+    return `${months[wat.getMonth()]} ${day}${suffix}, ${wat.getFullYear()} ` +
+           `${pad(wat.getHours())}:${pad(wat.getMinutes())}:${pad(wat.getSeconds())}`;
+}
+
+/* ---------- Bank account formatting ---------- */
+
+function splitBankAccount(value) {
+    const raw = (value || '').trim();
+    const idx = raw.indexOf('|');
+    if (idx === -1) {
+        return { bank: '', digits: raw.replace(/\D/g, '') };
+    }
+    return {
+        bank: raw.slice(0, idx).trim(),
+        digits: raw.slice(idx + 1).replace(/\D/g, '')
+    };
+}
+
+function groupDigits(digits) {
+    if (digits.length === 10) {
+        return digits.slice(0, 3) + ' ' + digits.slice(3, 6) + ' ' + digits.slice(6);
+    }
+    return digits.replace(/(\d{3})(?=\d)/g, '$1 ');
+}
+
+// Recipient → "OPay | 904 321 7521"
+function formatRecipientAccount(value) {
+    const { bank, digits } = splitBankAccount(value);
+    const formatted = groupDigits(digits);
+    if (!formatted) return bank;
+    return bank ? `${bank} | ${formatted}` : formatted;
+}
+
+// Sender → "PalmPay | 809****321" (already-masked values are left untouched)
+function formatSenderAccount(value) {
+    const raw = (value || '').trim();
+    if (raw.includes('*')) return raw;
+
+    const { bank, digits } = splitBankAccount(raw);
+    let formatted = digits;
+    if (digits.length >= 6) {
+        const mask = '*'.repeat(digits.length - 6);
+        formatted = digits.slice(0, 3) + mask + digits.slice(-3);
+    }
+    if (!formatted) return bank;
+    return bank ? `${bank} | ${formatted}` : formatted;
+}
+
+/* ---------- Element refs ---------- */
+const amountInput        = document.getElementById('amount');
+const recipientNameInput = document.getElementById('recipientName');
+const recipientBankInput = document.getElementById('recipientBank');
+const senderNameInput    = document.getElementById('senderName');
+const senderBankInput    = document.getElementById('senderBank');
+const updateBtn          = document.getElementById('updateBtn');
+const downloadBtn        = document.getElementById('downloadBtn');
+
+/* ---------- Live preview ---------- */
+[amountInput, recipientNameInput, senderNameInput].forEach(el => {
+    el.addEventListener('input', drawReceipt);
 });
 
+recipientBankInput.addEventListener('input', drawReceipt);
+senderBankInput.addEventListener('input', drawReceipt);
+
+// Format cleanly when the field loses focus
+recipientBankInput.addEventListener('blur', () => {
+    const formatted = formatRecipientAccount(recipientBankInput.value);
+    if (formatted !== recipientBankInput.value) recipientBankInput.value = formatted;
+    drawReceipt();
+});
+senderBankInput.addEventListener('blur', () => {
+    const formatted = formatSenderAccount(senderBankInput.value);
+    if (formatted !== senderBankInput.value) senderBankInput.value = formatted;
+    drawReceipt();
+});
+
+function syncFormattedInputs() {
+    const r = formatRecipientAccount(recipientBankInput.value);
+    if (r !== recipientBankInput.value) recipientBankInput.value = r;
+
+    const s = formatSenderAccount(senderBankInput.value);
+    if (s !== senderBankInput.value) senderBankInput.value = s;
+}
+
+/* ---------- Drawing ---------- */
 function drawReceipt() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -170,7 +378,7 @@ function drawReceipt() {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw diagonal watermark - less diagonal
+    // Diagonal watermark
     if (watermarkImg.complete) {
         ctx.save();
         ctx.globalAlpha = 0.05;
@@ -178,8 +386,8 @@ function drawReceipt() {
         const wmWidth = (watermarkImg.width / watermarkImg.height) * wmHeight;
 
         ctx.rotate(-Math.PI / 6);
-        for(let x = -canvas.width; x < canvas.width * 2; x += wmWidth + 100){
-            for(let y = -canvas.height; y < canvas.height * 2; y += wmHeight + 100){
+        for (let x = -canvas.width; x < canvas.width * 2; x += wmWidth + 100) {
+            for (let y = -canvas.height; y < canvas.height * 2; y += wmHeight + 100) {
                 ctx.drawImage(watermarkImg, x, y, wmWidth, wmHeight);
             }
         }
@@ -190,7 +398,7 @@ function drawReceipt() {
     const padding = 50;
     let lineHeight = 34;
 
-    // Logo top left - bigger
+    // Logo top left
     if (logoImg.complete) {
         const logoHeight = 75;
         const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
@@ -205,29 +413,29 @@ function drawReceipt() {
 
     y += 80;
 
-    // Amount - green, centered
+    // Amount
     ctx.fillStyle = '#00b386';
     ctx.font = 'bold 42px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(document.getElementById('amount').value, canvas.width/2, y);
+    ctx.fillText(amountInput.value, canvas.width / 2, y);
 
     y += 50;
 
-    // Status - centered
+    // Status
     ctx.fillStyle = '#333';
     ctx.font = '26px Arial';
-    ctx.fillText(document.getElementById('status').value, canvas.width/2, y);
+    ctx.fillText(receipt.status, canvas.width / 2, y);
 
     y += 35;
 
-    // Date - centered, gray
+    // Date & time
     ctx.fillStyle = '#888';
     ctx.font = '18px Arial';
-    ctx.fillText(document.getElementById('datetime').value, canvas.width/2, y);
+    ctx.fillText(receipt.datetime, canvas.width / 2, y);
 
     y += 60;
 
-    // Divider line - made slightly bolder for recipient details
+    // Divider
     ctx.strokeStyle = '#ddd';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -238,29 +446,25 @@ function drawReceipt() {
     y += 55;
     ctx.textAlign = 'left';
 
-    // Scale up everything from recipient details down by 1.5x
     lineHeight = 51;
 
-    // Details rows
+    // Details rows (bank values always rendered formatted)
     const details = [
-        ['Recipient Details', document.getElementById('recipientName').value, document.getElementById('recipientBank').value, true],
-        ['Sender Details', document.getElementById('senderName').value, document.getElementById('senderBank').value, true],
-        ['Transaction Type', document.getElementById('txnType').value, '', false],
-        ['Transaction No.', document.getElementById('txnNo').value, '', false],
-        ['Session ID', document.getElementById('sessionId').value, '', false]
+        ['Recipient Details', recipientNameInput.value, formatRecipientAccount(recipientBankInput.value), true],
+        ['Sender Details', senderNameInput.value, formatSenderAccount(senderBankInput.value), true],
+        ['Transaction Type', receipt.txnType, '', false],
+        ['Transaction No.', receipt.txnNo, '', false],
+        ['Session ID', receipt.sessionId, '', false]
     ];
 
     details.forEach(([label, line1, line2, isName]) => {
-        // Label - faint gray, left
         ctx.fillStyle = '#888';
         ctx.font = '22px Arial';
         ctx.fillText(label, padding, y);
 
-        // Value - right aligned
         ctx.textAlign = 'right';
 
-        // Names use dark gray and medium weight
-        if(isName){
+        if (isName) {
             ctx.fillStyle = '#222';
             ctx.font = '600 24px Arial';
             ctx.fillText(line1, canvas.width - padding, y);
@@ -291,13 +495,12 @@ function drawReceipt() {
 
     y += 50;
 
-    // Footer text - scaled up 1.5x
+    // Footer text
     ctx.fillStyle = '#888';
     ctx.font = '20px Arial';
-    const footerText = document.getElementById('footer').value;
-    const words = footerText.split(' ');
+    const words = receipt.footer.split(' ');
     let line = '';
-    const maxWidth = canvas.width - padding*2;
+    const maxWidth = canvas.width - padding * 2;
 
     for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + ' ';
@@ -313,14 +516,38 @@ function drawReceipt() {
     ctx.fillText(line, padding, y);
 }
 
-document.getElementById('downloadBtn').addEventListener('click', () => {
+/* ---------- Regeneration ---------- */
+function regenerateHiddenFields() {
+    receipt.status    = DEFAULT_STATUS;
+    receipt.txnType   = DEFAULT_TXN_TYPE;
+    receipt.txnNo     = randomizeTail(TXN_NO_TEMPLATE, 2);      // same length, first 2 kept
+    receipt.sessionId = randomizeTail(SESSION_ID_TEMPLATE, 5);  // same length, first 5 kept
+    receipt.datetime  = getWATDateTime();                       // current WAT
+}
+
+/* ---------- Actions ---------- */
+updateBtn.addEventListener('click', () => {
+    regenerateHiddenFields();
+    syncFormattedInputs();
+    drawReceipt();
+
+    updateBtn.classList.add('spinning');
+    setTimeout(() => updateBtn.classList.remove('spinning'), 700);
+});
+
+downloadBtn.addEventListener('click', () => {
+    regenerateHiddenFields();
+    syncFormattedInputs();
+    drawReceipt();
+
     const link = document.createElement('a');
     link.download = 'opay-receipt.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
 });
 
-// Initial draw
+/* ---------- Initial draw ---------- */
+syncFormattedInputs();
 drawReceipt();
 </script>
 
